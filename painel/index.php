@@ -10,9 +10,9 @@ header("Pragma: no-cache",true);
 
 //
 //require_once"../".$caminho_prova."util/gerador_linhas.php";
-if($_GET['bd']==2){
+if($_GET['db']==2){
 	require_once "../util/database/include/config2_bd.inc.php";
-} elseif($_GET['bd']==3){
+} elseif($_GET['db']==3){
 	require_once "../util/database/include/config3_bd.inc.php";
 } else{
 	require_once "../util/database/include/config1_bd.inc.php";
