@@ -10,8 +10,14 @@ header("Pragma: no-cache",true);
 
 //
 //require_once"../".$caminho_prova."util/gerador_linhas.php";
-require_once"../".$caminho_prova."util/database/include/config_bd.inc.php";
-require_once"../".$caminho_prova."util/database/class/ControleBDFactory.class.php";
+if($_GET['bd']==2){
+	require_once "../util/database/include/config2_bd.inc.php";
+} elseif($_GET['bd']==3){
+	require_once "../util/database/include/config3_bd.inc.php";
+} else{
+	require_once "../util/database/include/config1_bd.inc.php";
+}
+require_once"../util/database/class/ControleBDFactory.class.php";
 $obj_controle=ControleBDFactory::getControlador(DB_DRIVER);
 
 //if ($_SESSION['logado']>4 || $_SESSION['logado']==null) exit("<script>document.location=\"../auth.php?uri=".$_SERVER['SCRIPT_URI']."?".$_SERVER['QUERY_STRING']."\"</script>");
