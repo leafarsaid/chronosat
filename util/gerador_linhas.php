@@ -1,6 +1,12 @@
 <?
 
-require_once "util/database/include/config_bd.inc.php";
+if($_GET['bd']==2){
+	require_once "util/database/include/config2_bd.inc.php";
+} elseif($_GET['bd']==3){
+	require_once "util/database/include/config3_bd.inc.php";
+} else{
+	require_once "util/database/include/config1_bd.inc.php";
+}
 require_once "util/database/class/ControleBDFactory.class.php";
 
 /*
@@ -20,7 +26,7 @@ function printHeader($trecho, $trecho_txt1, $txt_especifico) {
 	$header .= sprintf("%s\n","   <tr class=\"bg_header\">");
 	
 	$header .= sprintf("%s\n","    <td align=\"left\" valign=\"top\">");
-	$header .= sprintf("%s\n","     <img src=\"imagens/logo_erechim_2014.png\" height=100 border=0 valign=\"center\" align=\"absmiddle\"/>");
+	$header .= sprintf("%s\n","     <img src=\"imagens/sertoes.png\" height=100 border=0 valign=\"center\" align=\"absmiddle\"/>");
 	$header .= sprintf("%s\n","    </td>");
 	
 	$header .= sprintf("%s\n","    <td align=\"left\" valign=\"top\" style=\"font-family: Arial Narrow;\">");
@@ -298,13 +304,13 @@ function geraFooter () {
 	$footer .= sprintf("%s\n","<tr style=\"font-size: 10px;\">");
 	
 	$footer .= sprintf("%s\n","<td align=\"left\">");
-	$footer .= sprintf("%s   ","<img src=\"imagens/erechim_prefeitura.png\" width=300 border=0 align=\"absmiddle\"/>");
+	//$footer .= sprintf("%s   ","<img src=\"imagens/erechim_prefeitura.png\" width=300 border=0 align=\"absmiddle\"/>");
 	
 	$footer .= sprintf("%s\n"," </td><td align=\"right\">");
 	$footer .= sprintf("%s   ","<img src=\"imagens/tn_fia_2.png\" width=50 border=0 align=\"absmiddle\"/>");
 	$footer .= sprintf("%s   ","<img src=\"imagens/tn_codasur_2.png\" width=50 border=0 align=\"absmiddle\"/>");
 	$footer .= sprintf("%s   ","<img src=\"imagens/tn_cba_2.png\" width=50 border=0 align=\"absmiddle\"/>");
-	$footer .= sprintf("%s   ","<img src=\"imagens/tn_fga_2.png\" width=50 border=0 align=\"absmiddle\"/>");
+	//$footer .= sprintf("%s   ","<img src=\"imagens/tn_fga_2.png\" width=50 border=0 align=\"absmiddle\"/>");
 	$footer .= sprintf("%s\n","<img src=\"imagens/tn_eaec.png\" width=50 border=0 align=\"absmiddle\"/>");
 	$footer .= sprintf("%s\n","</td></tr></table>");
 	$footer .= sprintf("%s\n","</td></tr></table>");

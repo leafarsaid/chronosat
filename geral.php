@@ -26,7 +26,7 @@ $int_id_cat=(int)$_REQUEST["categoria"];
 //--------------------------------------------------------------------------
 // populando a lista de valores
 $lista = array();
-$xml_src = "http://".$_SERVER[HTTP_HOST]."/2014/cc/barretos/motos/geralXML.php?".$_SERVER['QUERY_STRING'];
+$xml_src = "http://".$_SERVER[HTTP_HOST]."/geralXML.php?".$_SERVER['QUERY_STRING'];
 $xml = simplexml_load_file($xml_src);
 $lista_array = array();
 
