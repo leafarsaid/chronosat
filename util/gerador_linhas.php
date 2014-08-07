@@ -39,13 +39,12 @@ function printHeader($trecho, $trecho_txt1, $txt_especifico) {
 	$header .= sprintf("%s\n","    </td>");
 	
 	$header .= sprintf("%s\n","    <td align=\"right\" valign=\"top\">");
+	$header .= sprintf("%s\n","     <img src=\"imagens/patr3.jpg\" border=0 align=\"absmiddle\"/>&nbsp;");
 	$header .= sprintf("%s\n","     <img src=\"imagens/patr1.jpg\" border=0 align=\"absmiddle\"/>&nbsp;");
 	$header .= sprintf("%s\n","     <img src=\"imagens/patr2.jpg\" border=0 align=\"absmiddle\"/>&nbsp;");
-	$header .= sprintf("%s\n","     <img src=\"imagens/patr3.jpg\" border=0 align=\"absmiddle\"/>&nbsp;");
-	$header .= sprintf("%s\n","     <img src=\"imagens/patr4.jpg\" border=0 align=\"absmiddle\"/>&nbsp;");
-	$header .= sprintf("%s\n","     <img src=\"imagens/patr5.jpg\" border=0 align=\"absmiddle\"/>&nbsp;");
 	$header .= sprintf("%s\n","     <img src=\"imagens/patr6.jpg\" border=0 align=\"absmiddle\"/>&nbsp;");
-	$header .= sprintf("%s\n","     <img src=\"imagens/patr7.jpg\" border=0 align=\"absmiddle\"/>");
+	$header .= sprintf("%s\n","     <img src=\"imagens/patr7.jpg\" border=0 align=\"absmiddle\"/>&nbsp;");
+	$header .= sprintf("%s\n","     <img src=\"imagens/patr4.jpg\" border=0 align=\"absmiddle\"/>");
 	$header .= sprintf("%s\n","    </td>");
 	
 	$header .= sprintf("%s\n","   </tr>");
@@ -313,9 +312,7 @@ function geraFooter () {
 	$footer .= sprintf("%s\n","     <img src=\"imagens/chronosat_preto.png\" width=50 border=0 align=\"absmiddle\"/>");
 	
 	$footer .= sprintf("%s\n"," </td><td align=\"right\">");
-	$footer .= sprintf("%s   ","<img src=\"imagens/tn_fia_2.png\" width=50 border=0 align=\"absmiddle\"/>");
-	$footer .= sprintf("%s   ","<img src=\"imagens/tn_codasur_2.png\" width=50 border=0 align=\"absmiddle\"/>");
-	$footer .= sprintf("%s   ","<img src=\"imagens/tn_cba_2.png\" width=50 border=0 align=\"absmiddle\"/>");
+	$footer .= sprintf("%s   ","<img src=\"imagens/ass_dunas_cba_chrono.png\" width=250 border=0 align=\"absmiddle\"/>");
 	$footer .= sprintf("%s\n","</td></tr></table>");
 	$footer .= sprintf("%s\n","</td></tr></table>");
 	return $footer;
