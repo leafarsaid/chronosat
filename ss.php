@@ -67,7 +67,7 @@ function geraDados ($arr_comp) {
 	global $arr_ss;
 	global $campeonato;
 	global $col_stat;
-	
+
 	$pos_cat[1][0]=1;
 	$pos_cat[2][0]=1;
 	$pos_cat[3][0]=1;
@@ -83,18 +83,18 @@ function geraDados ($arr_comp) {
 	$pos_cat[13][0]=1;
 	$pos_cat[14][0]=1;
 	$pos_cat[15][0]=1;
-	
+
 	for ($i=0;$i<count($arr_comp);$i++) {
 		$arr_retorno[$i] = array();
-		$cat_num = $arr_comp[$i]["c13_codigo"];	
+		$cat_num = $arr_comp[$i]["c13_codigo"];
 
 		if ($arr_comp[$i]["total"]!="* * *" && $arr_comp[$i]["C"]!="* * *") {
 			array_push($arr_retorno[$i],($arr_comp[$i]["c03_status"]=="D")?"D":($i+1));
 		}
 		else array_push($arr_retorno[$i],'NC');
-		
+
 		//
-		array_push($arr_retorno[$i],$arr_comp[$i]["c03_numero"]);		
+		array_push($arr_retorno[$i],$arr_comp[$i]["c03_numero"]);
 
 		//
 		$piloto = nomeComp($arr_comp[$i]['piloto']);
@@ -114,12 +114,12 @@ function geraDados ($arr_comp) {
 		array_push($arr_retorno[$i],$tripulacao);
 		array_push($arr_retorno[$i],$arr_comp[$i]["modelo"]);
 		array_push($arr_retorno[$i],$arr_comp[$i]["equipe"]);
-		
-		
-		
+
+
+
 		//
 		array_push($arr_retorno[$i],$arr_comp[$i]["tripulacao_origem"]);
-		
+
 		if ($arr_comp[$i]["total"]!="* * *") {
 			$pos = $pos_cat[$cat_num][0];
 		}
@@ -147,7 +147,7 @@ function geraDados ($arr_comp) {
 		array_push($arr_retorno[$i],substr($arr_comp[$i]["tempo"],0,8));
 
 		//
-		array_push($arr_retorno[$i],substr($arr_comp[$i]["P"],0,8));		
+		array_push($arr_retorno[$i],substr($arr_comp[$i]["P"],0,8));
 
 		//
 		array_push($arr_retorno[$i],substr($arr_comp[$i]["A"],0,8));
@@ -255,7 +255,7 @@ echo geraLinhaHtml ($lista, 1, "", $campos_header_ss, $print, "X", $trecho, $tre
 </table>
   </td>
 </tr>
-<?= $footer ?>
+<? echo geraFooter(); ?>
 </table>
 </table>
 </body>
