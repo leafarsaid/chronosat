@@ -179,7 +179,7 @@ $str_hdr_rpt=$_REQUEST["txt_cabecalho"];
 $campeonato = $_REQUEST["campeonato"];
 $mod = $_REQUEST["mod"];
 
-
+		
 
 if (isset($_REQUEST["trechos"])) {
 	$arr_ss = explode(",",$_REQUEST["trechos"]);
@@ -201,9 +201,18 @@ else					echo "<link href=\"css/relatorio_video.css\" rel=\"stylesheet\" type=\"
 //valores
 $lista = array();
 
-$xml_src = "http://".$_SERVER[HTTP_HOST]."/chronosat/geralXML.php?".$_SERVER['QUERY_STRING'];
+$xml_src = "http://".$_SERVER[HTTP_HOST]."/2014/cprv/morretes/geralXML.php?".$_SERVER['QUERY_STRING'];
 
 $xml = simplexml_load_file($xml_src);
+
+//phpinfo();//_SERVER[REQUEST_URI]
+//var_dump($xml_src);
+
+
+
+//xml2array($lista, $lista_array);
+
+//var_dump($lista_array);]
 
 
 
@@ -231,17 +240,17 @@ foreach ($lista_array as $v) {
 
 	//echo $v['piloto']."<br />";
 
-
+	
 
 	$lista[$i] = array();
 
-
+	 
 
     array_push($lista[$i], $v['colocacao']);
 
     array_push($lista[$i], $v['numeral']);
 
-
+	
 
 	$piloto = nomeComp($v['piloto']);
 
@@ -249,7 +258,7 @@ foreach ($lista_array as $v) {
 
 	$navegador2 = nomeComp($v['navegador2']);
 
-
+	
 
 	$tripulacao = '<div class="trip" id="div">';
 
@@ -259,70 +268,45 @@ foreach ($lista_array as $v) {
 
 	if ($navegador2!="") $tripulacao .= "<b>".$navegador2."</b>";
 
-	//$tripulacao .= $v['modelo']."<br />";
-	//$tripulacao .= $v['equipe'];
 
 	$tripulacao .= '</div>';
 
 	array_push($lista[$i], $tripulacao);
-	array_push($lista[$i], utf8_decode($v['modelo']));
-	array_push($lista[$i], utf8_decode($v['equipe']));
+	//array_push($lista[$i], utf8_decode($v['modelo']));
+	//array_push($lista[$i], utf8_decode($v['equipe']));
 
-
+	
 
 	if ($piloto!="") $origem = $v['origem_piloto'].'<br />';
 
 	if ($navegador!="") $origem .= $v['origem_navegador'].'<br />';
 
-	if ($navegador2!="") $origem .= $v['origem_navegador2'];
+	if ($navegador2!="") $origem .= $v['origem_navegador2'];		
 
-    array_push($lista[$i], $origem);
+    //array_push($lista[$i], $origem);
 
+    array_push($lista[$i], $v['categoria']);	
 
+	for ($x=0;$x<50;$x++) {
+		if ($x==0) {
+			$txt_ss = "prologo";
+		} else {
+			$txt_ss = "ss$x";
+		}
+		if (in_array("$x",$arr_ss)) array_push($lista[$i], substr($v["$txt_ss"],3,10));
+	}
 
-    array_push($lista[$i], $v['categoria']);
+	array_push($lista[$i], substr($v['tempo'],1,10));
 
+	array_push($lista[$i], substr($v['penalidade'],1,7));
 
+	//array_push($lista[$i], substr($v['bonus'],1,7));
+	
+	array_push($lista[$i], substr($v['total'],1,10));
 
-	if (in_array("0",$arr_ss)) array_push($lista[$i], substr($v['prologo'],0,10));
+	//array_push($lista[$i], substr($v['diferenca_anterior'],3,10));
 
-	if (in_array("1",$arr_ss)) array_push($lista[$i], substr($v['ss1'],0,10));
-
-	if (in_array("2",$arr_ss)) array_push($lista[$i], substr($v['ss2'],0,10));
-
-	if (in_array("3",$arr_ss)) array_push($lista[$i], substr($v['ss3'],0,10));
-
-	if (in_array("4",$arr_ss)) array_push($lista[$i], substr($v['ss4'],0,10));
-
-	if (in_array("5",$arr_ss)) array_push($lista[$i], substr($v['ss5'],0,10));
-
-	if (in_array("6",$arr_ss)) array_push($lista[$i], substr($v['ss6'],0,10));
-
-	if (in_array("7",$arr_ss)) array_push($lista[$i], substr($v['ss7'],0,10));
-
-	if (in_array("8",$arr_ss)) array_push($lista[$i], substr($v['ss8'],0,10));
-
-	if (in_array("9",$arr_ss)) array_push($lista[$i], substr($v['ss9'],0,10));
-
-	if (in_array("10",$arr_ss)) array_push($lista[$i], substr($v['ss10'],0,10));
-
-	if (in_array("11",$arr_ss)) array_push($lista[$i], substr($v['ss11'],0,10));
-
-	if (in_array("12",$arr_ss)) array_push($lista[$i], substr($v['ss12'],0,10));
-
-
-
-	array_push($lista[$i], substr($v['tempo'],0,10));
-
-	array_push($lista[$i], substr($v['penalidade'],0,8));
-
-	array_push($lista[$i], substr($v['bonus'],0,8));
-
-	array_push($lista[$i], substr($v['total'],0,10));
-
-	array_push($lista[$i], substr($v['diferenca_anterior'],0,10));
-
-	array_push($lista[$i], substr($v['diferenca_lider'],0,10));
+	array_push($lista[$i], substr($v['diferenca_lider'],1,10));
 
 	$i++;
 
@@ -383,9 +367,9 @@ if ($int_id_ss) $numero_trecho = $int_id_ss;
 
 if ($sss) $numero_trecho = $sss;
 
-//if ($prova==1) $numero_trecho = 6;
+if ($prova==1) $numero_trecho = 4;
 
-//if ($prova==2) $numero_trecho = 10;
+if ($prova==2) $numero_trecho = 9;
 
 if ($_REQUEST['trecho']==0) $numero_trecho = 0;
 
@@ -456,38 +440,22 @@ array_push($campos_header_ss,"Pos");
 array_push($campos_header_ss,"No");
 
 array_push($campos_header_ss,"Piloto/Navegador");
-array_push($campos_header_ss,"Modelo");
-array_push($campos_header_ss,"Equipe");
+//array_push($campos_header_ss,"Modelo");
+//array_push($campos_header_ss,"Equipe");
 
-array_push($campos_header_ss,"Nat");
+//array_push($campos_header_ss,"Nat");
 
 array_push($campos_header_ss,"(Pos)Cat");
 
-if (in_array("0", $arr_ss)) array_push($campos_header_ss,"Prol.");
 
-if (in_array("1", $arr_ss)) array_push($campos_header_ss,"SS1");
-
-if (in_array("2", $arr_ss)) array_push($campos_header_ss,"SS2");
-
-if (in_array("3", $arr_ss)) array_push($campos_header_ss,"SS3");
-
-if (in_array("4", $arr_ss)) array_push($campos_header_ss,"SS4");
-
-if (in_array("5", $arr_ss)) array_push($campos_header_ss,"SS5");
-
-if (in_array("6", $arr_ss)) array_push($campos_header_ss,"SS6");
-
-if (in_array("7", $arr_ss)) array_push($campos_header_ss,"SS7");
-
-if (in_array("8", $arr_ss)) array_push($campos_header_ss,"SS8");
-
-if (in_array("9", $arr_ss)) array_push($campos_header_ss,"SS9");
-
-if (in_array("10", $arr_ss)) array_push($campos_header_ss,"SS10");
-
-if (in_array("11", $arr_ss)) array_push($campos_header_ss,"SS11");
-
-if (in_array("12", $arr_ss)) array_push($campos_header_ss,"SS12");
+	for ($x=0;$x<50;$x++) {
+		if ($x==0) {
+			$txt_ss = "Pról.";
+		} else {
+			$txt_ss = "SS$x";
+		}
+		if (in_array("$x", $arr_ss)) array_push($campos_header_ss,"$txt_ss");
+	}
 
 
 
@@ -495,10 +463,10 @@ array_push($campos_header_ss,"Tempo");
 
 array_push($campos_header_ss,"Penal.");
 
-array_push($campos_header_ss,"Bonus");
+//array_push($campos_header_ss,"Bonus");
 array_push($campos_header_ss,"Tempo Total");
 
-array_push($campos_header_ss,"Dif.Ant.");
+//array_push($campos_header_ss,"Dif.Ant.");
 
 array_push($campos_header_ss,"Dif.L&iacute;der");
 
@@ -512,7 +480,7 @@ echo geraLinhaHtml ($lista, 1, $_GET["num_linhas"], $campos_header_ss, $print, $
 
 
 
-
+      
 
 ?>
 

@@ -11,7 +11,7 @@ header("Cache-Control: no-cache, must-revalidate",true);
 header("Pragma: no-cache",true);
 
 //
-//if ($_SESSION['logado']>0 || $_SESSION['logado']==NULL) exit("<script>document.location=\"auth.php?uri=".$_SERVER['SCRIPT_URI']."?".$_SERVER['QUERY_STRING']."\"</script>");
+if ($_SESSION['logado']>0 || $_SESSION['logado']==NULL) exit("<script>document.location=\"auth.php?uri=".$_SERVER['SCRIPT_URI']."?".$_SERVER['QUERY_STRING']."\"</script>");
 
 //phpinfo();
 
@@ -235,7 +235,7 @@ currentField.value = value + currentField.value;
                 </select>&nbsp;&nbsp;&nbsp;
                 
                 <input type="button" id="inserir_tempo" value="Inserir">        </td>
-        <td width="88" align="right"><font size="+5">SS<?= $_REQUEST["trecho"] ?></font></td>
+        <td width="88" align="right"><font size="+5">SS<?= $trecho ?></font></td>
         <td width="105" align="right">
         	Usuário: <?= $_SESSION['usuario'] ?> (<?= $_SESSION[usuario_sigla] ?>)<br />
         	Nível: <?= $_SESSION['nivel'] ?>

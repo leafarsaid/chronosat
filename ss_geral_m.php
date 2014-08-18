@@ -235,11 +235,11 @@ function geraDados ($arr_comp) {
 		array_push($arr_retorno[$i],"(".$txt_pos.")".$arr_comp[$i]["categoria"]);
 
 		//
-		array_push($arr_retorno[$i],substr($arr_comp[$i]["tempo"],3,8));
+		//array_push($arr_retorno[$i],substr($arr_comp[$i]["tempo"],3,8));
 		//array_push($arr_retorno[$i],$arr_comp[$i]["tempo"]);
 		
 		//
-		array_push($arr_retorno[$i],substr($arr_comp[$i]["P"],3,5));
+		//array_push($arr_retorno[$i],substr($arr_comp[$i]["P"],3,5));
 		//array_push($arr_retorno[$i],$arr_comp[$i]["P"]);
 
 		//
@@ -317,7 +317,7 @@ $cat_num = $arr_comp[$i]["c13_codigo"];
 		$tripulacao_origem = $arr_comp[$i]["piloto_origem"];
 		if ($arr_comp[$i]["navegador_origem"]!="") $tripulacao_origem .= "<br>".$arr_comp[$i]["navegador_origem"];
 		if ($arr_comp[$i]["navegador2_origem"]!="") $tripulacao_origem .= "<br>".$arr_comp[$i]["navegador2_origem"];		
-		array_push($arr_retorno[$i],$tripulacao_origem);
+		//array_push($arr_retorno[$i],$tripulacao_origem);
 		
 		
 		// se não é desclassificado
@@ -334,11 +334,11 @@ $cat_num = $arr_comp[$i]["c13_codigo"];
 		$status = $arr_comp[$i]["c03_status"];	
 		//
 		if ($status == 'D') array_push($arr_retorno[$i],"*");
-				else array_push($arr_retorno[$i],substr($arr_comp[$i]["tempo"],1,9));
+				//else array_push($arr_retorno[$i],substr($arr_comp[$i]["tempo"],1,9));
 		
 		//
 		if ($status == 'D') array_push($arr_retorno[$i],"*");
-				else array_push($arr_retorno[$i],substr($arr_comp[$i]["P_geral"],1,9));
+				//else array_push($arr_retorno[$i],substr($arr_comp[$i]["P_geral"],1,9));
 
 		//
 		if ($status == 'D') array_push($arr_retorno[$i],"*");
@@ -349,13 +349,13 @@ $cat_num = $arr_comp[$i]["c13_codigo"];
 		if ($l<0) $l=0;
 		
 		if ($arr_comp[$i]["total_geral"]!="* * *"){
-		   array_push($arr_retorno[$i],substr(secToTime($arr_comp[$i]["total_num"]-$arr_comp[$l]["total_num"]),1,9));
+		   //array_push($arr_retorno[$i],substr(secToTime($arr_comp[$i]["total_num"]-$arr_comp[$l]["total_num"]),1,9));
 
 		   array_push($arr_retorno[$i],substr(secToTime($arr_comp[$i]["total_num"]-$arr_comp[0]["total_num"]),1,9));
 		}
 		
         else {
-		   array_push($arr_retorno[$i],"* * *");
+		   //array_push($arr_retorno[$i],"* * *");
 
 		   array_push($arr_retorno[$i],"* * *");
 		}
@@ -444,8 +444,8 @@ array_push($campos_header_ss,"Pos");
 array_push($campos_header_ss,"No");
 array_push($campos_header_ss,"Piloto/Navegador<br><i>Driver/Co-Driver</i>");
 array_push($campos_header_ss,"(Pos)Cat");
-array_push($campos_header_ss,"Tempo_s/Pen<br><i>Scratch_Time</i>");
-array_push($campos_header_ss,"Penal.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br><i>Penalty</i>");
+//array_push($campos_header_ss,"Tempo_s/Pen<br><i>Scratch_Time</i>");
+//array_push($campos_header_ss,"Penal.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br><i>Penalty</i>");
 array_push($campos_header_ss,"Tempo_Total&nbsp;&nbsp;&nbsp;<br><i>Total_Time</i>");
 array_push($campos_header_ss,"Dif.Lider.<br><i>Diff_1st</i>");
 // ESPECIAL ESPECIAL ESPECIAL ESPECIAL ESPECIAL ESPECIAL ESPECIAL ESPECIAL ESPECIAL ESPECIAL ESPECIAL  
@@ -457,12 +457,12 @@ $campos_header_geral = array();
 array_push($campos_header_geral,"Pos");
 array_push($campos_header_geral,"No");
 array_push($campos_header_geral,"Piloto/Navegador<br><i>Driver/Co-Driver</i>");
-array_push($campos_header_geral,"Nat<br><i>Nat</i>");
+//array_push($campos_header_geral,"Nat<br><i>Nat</i>");
 array_push($campos_header_geral,"(Pos)Cat");
-array_push($campos_header_geral,"Tempo_s/Pen<br><i>Scratch_Time</i>");
-array_push($campos_header_geral,"Penal.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br><i>Penalty</i>");
+//array_push($campos_header_geral,"Tempo_s/Pen<br><i>Scratch_Time</i>");
+//array_push($campos_header_geral,"Penal.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br><i>Penalty</i>");
 array_push($campos_header_geral,"Tempo_Total&nbsp;&nbsp;&nbsp;<br><i>Total_Time</i>");
-array_push($campos_header_geral,"Dif.Ant.<br><i>Diff_Prev&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</i>");
+//array_push($campos_header_geral,"Dif.Ant.<br><i>Diff_Prev&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</i>");
 array_push($campos_header_geral,"Dif.Lider.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br><i>Diff_1st</i>");
 //GERAL GERAL GERAL GERAL GERAL GERAL GERAL GERAL GERAL GERAL GERAL GERAL GERAL GERAL GERAL GERAL GERAL GERAL 
 

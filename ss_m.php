@@ -168,15 +168,7 @@ for ($y=0;$y<50;$y++) $pos_cat[$y][0]=1;
 		//else
 		if ($arr_comp[$i]["total"]!="* * *" && $arr_comp[$i]["C"]!="* * *") {
 
-			if($arr_comp[$i]["c03_status"]=="D"){
-				$status_txt = "D";
-			} elseif($arr_comp[$i]["c03_status"]=="NC"){
-				$status_txt = "NC";
-			} else {
-				$status_txt = $i+1;
-			}
-
-			array_push($arr_retorno[$i],$status_txt);
+			array_push($arr_retorno[$i],($arr_comp[$i]["c03_status"]=="D")?"D":($i+1));
 
 		}
 
@@ -221,7 +213,7 @@ for ($y=0;$y<50;$y++) $pos_cat[$y][0]=1;
 
 		//
 
-		array_push($arr_retorno[$i],$arr_comp[$i]["tripulacao_origem"]);
+		//array_push($arr_retorno[$i],$arr_comp[$i]["tripulacao_origem"]);
 
 		//array_push($arr_retorno[$i],$arr_comp[$i]["modalidade"]);
 
@@ -292,19 +284,19 @@ for ($y=0;$y<50;$y++) $pos_cat[$y][0]=1;
 
 		//array_push($arr_retorno[$i],$arr_comp[$i]["C"]);
 
-		array_push($arr_retorno[$i],$arr_comp[$i]["tempo"]);
+		//array_push($arr_retorno[$i],$arr_comp[$i]["tempo"]);
 
 
 
 		//
 
-		array_push($arr_retorno[$i],$arr_comp[$i]["P"]);		
+		//array_push($arr_retorno[$i],$arr_comp[$i]["P"]);		
 
 		
 
 		//
 
-		array_push($arr_retorno[$i],$arr_comp[$i]["A"]);
+		//array_push($arr_retorno[$i],$arr_comp[$i]["A"]);
 
 
 
@@ -316,13 +308,13 @@ for ($y=0;$y<50;$y++) $pos_cat[$y][0]=1;
 
 		//
 
-		array_push($arr_retorno[$i],round($arr_comp[$i]["velocidade"],2));
+		//array_push($arr_retorno[$i],round($arr_comp[$i]["velocidade"],2));
 
 
 
 		//
 
-		array_push($arr_retorno[$i],substr($arr_comp[$i]["dif1"],-10));
+		array_push($arr_retorno[$i],substr($arr_comp[$i]["dif1"],-8));
 		//array_push($arr_retorno[$i],$arr_comp[$i]["dif1"]);
 
 
@@ -462,12 +454,8 @@ $desloc2 = $tre[0]["c02_desl_fin"];
 //else 								$status .= "<br>Resultados Extra-Oficiais/Provisional Results";
 
 
-/*
-if ($tre[0]["c02_status"]=="F") 	$status = "<br>Resultados Oficiais";
 
-else 								$status .= "<br>Resultados Extra-Oficiais";
-*/
-if ($_REQUEST["oficial"]==1) 	$status = "<br>Resultados Oficiais";
+if ($tre[0]["c02_status"]=="F") 	$status = "<br>Resultados Oficiais";
 
 else 								$status .= "<br>Resultados Extra-Oficiais";
 
@@ -549,7 +537,7 @@ array_push($campos_header_ss,"No");
 
 array_push($campos_header_ss,"Piloto / Navegador");
 
-array_push($campos_header_ss,"Nat");
+//array_push($campos_header_ss,"Nat");
 
 //array_push($campos_header_ss,"Mod");
 
@@ -571,15 +559,15 @@ array_push($campos_header_ss,"(Pos)Cat");
 
 //array_push($campos_header_ss,"Chegada");
 
-array_push($campos_header_ss,"Tempo");
+//array_push($campos_header_ss,"Tempo");
 
-array_push($campos_header_ss,"Penal.");
+//array_push($campos_header_ss,"Penal.");
 
-array_push($campos_header_ss,"Bonus");
+//array_push($campos_header_ss,"Bonus");
 
 array_push($campos_header_ss,"Total");
 
-array_push($campos_header_ss,"Vel.(km/h)");
+//array_push($campos_header_ss,"Vel.(km/h)");
 
 array_push($campos_header_ss,"Dif 1o.");
 
@@ -681,15 +669,11 @@ echo geraLinhaHtml ($lista, 1, "", $campos_header_ss, $print, "X", $trecho, $tre
 
 
 
-<?= $footer ?>
+//<?= $footer ?>
 
 
 
-</table>
-
-
-
-
+//</table>
 
 
 
@@ -697,15 +681,19 @@ echo geraLinhaHtml ($lista, 1, "", $campos_header_ss, $print, "X", $trecho, $tre
 
 
 
-</table>
 
 
 
-</body>
+
+//</table>
 
 
 
-</html>
+//</body>
+
+
+
+//</html>
 
 
 
