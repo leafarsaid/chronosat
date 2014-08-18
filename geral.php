@@ -179,7 +179,7 @@ $str_hdr_rpt=$_REQUEST["txt_cabecalho"];
 $campeonato = $_REQUEST["campeonato"];
 $mod = $_REQUEST["mod"];
 
-
+		
 
 if (isset($_REQUEST["trechos"])) {
 	$arr_ss = explode(",",$_REQUEST["trechos"]);
@@ -246,17 +246,17 @@ foreach ($lista_array as $v) {
 
 	//echo $v['piloto']."<br />";
 
-
+	
 
 	$lista[$i] = array();
 
-
+	 
 
     array_push($lista[$i], $v['colocacao']);
 
     array_push($lista[$i], $v['numeral']);
 
-
+	
 
 	$piloto = nomeComp($v['piloto']);
 
@@ -264,7 +264,7 @@ foreach ($lista_array as $v) {
 
 	$navegador2 = nomeComp($v['navegador2']);
 
-
+	
 
 	$tripulacao = '<div class="trip" id="div">';
 
@@ -283,21 +283,21 @@ foreach ($lista_array as $v) {
 	array_push($lista[$i], utf8_decode($v['modelo']));
 	array_push($lista[$i], utf8_decode($v['equipe']));
 
-
+	
 
 	if ($piloto!="") $origem = $v['origem_piloto'].'<br />';
 
 	if ($navegador!="") $origem .= $v['origem_navegador'].'<br />';
 
-	if ($navegador2!="") $origem .= $v['origem_navegador2'];
+	if ($navegador2!="") $origem .= $v['origem_navegador2'];		
 
     array_push($lista[$i], $origem);
 
+		
 
+    array_push($lista[$i], $v['categoria']);	
 
-    array_push($lista[$i], $v['categoria']);
-
-
+	
 
 	if (in_array("0",$arr_ss)) array_push($lista[$i], substr($v['prologo'],0,10));
 
@@ -325,14 +325,14 @@ foreach ($lista_array as $v) {
 
 	if (in_array("12",$arr_ss)) array_push($lista[$i], substr($v['ss12'],0,10));
 
-
+	
 
 	array_push($lista[$i], substr($v['tempo'],0,10));
 
 	array_push($lista[$i], substr($v['penalidade'],0,8));
 
 	array_push($lista[$i], substr($v['bonus'],0,8));
-
+	
 	array_push($lista[$i], substr($v['total'],0,10));
 
 	array_push($lista[$i], substr($v['diferenca_anterior'],0,10));
@@ -527,7 +527,7 @@ echo geraLinhaHtml ($lista, 1, $_GET["num_linhas"], $campos_header_ss, $print, $
 
 
 
-
+      
 
 ?>
 
