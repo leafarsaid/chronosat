@@ -417,8 +417,7 @@ else 								$status .= "<br>Resultados Extra-Oficiais";
 
 
 
-$txt_especifico = date("d/m/Y  -  H:i:s");
-
+$txt_especifico = date("j/M/Y - G:i:s (T)");
 
 //$txt_especifico .= "<br><br>Resultados Acumulados/Overall Results - Motos/Bikes";
 
