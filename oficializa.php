@@ -16,20 +16,6 @@ require_once "util/database/class/ControleBDFactory.class.php";
 //
 $href = "history.back()";
 
-//codigo, tipo, tempo_status, veiculo
-
-
-
-/*
-$tempo_codigo = $_GET["codigo"];
-$tempo_valor = $_GET["tempo"];
-$tempo_tipo = $_GET["tipo"];
-$veiculo = $_GET["veiculo"];
-$trecho = $_GET["trecho"];
-$modalidade = $_GET["modalidade"];
-$acao = $_GET["acao"];
-*/
-
 $tempo_codigo = $valor_get[0];
 $tempo_tipo = $valor_get[1];
 if ($valor_get[2] == "E") $acao = "OFICIAL";
@@ -43,7 +29,6 @@ $tempo_valor = $_GET["tempo"];
 $id_tempo = $_GET["id_tempo"];
 $txt_obs = $_GET["txt_obs"];
 $sinal = ($tempo_valor[0]=="-" && $tempo_valor[1]==0) ? "-" : "";
-
 
 //
 switch (strtoupper($acao)) {
@@ -78,13 +63,8 @@ switch (strtoupper($acao)) {
 		$parte_decimal = str_pad($parte_decimal, 2, '0', STR_PAD_RIGHT);
 		$parte_decimal = $parte_decimal*1;
 		$parte_decimal = ($parte_decimal<10) ? 0 : $parte_decimal;
-		
 		$sql[] = "UPDATE t01_tempos SET c01_status = 'E' WHERE c01_tipo = '$tempo_tipo' AND c03_codigo = $veiculo AND c02_codigo = $trecho";
-		
-		//$sql[] = "INSERT INTO t01_tempos (c01_valor, c01_tipo, c01_status, c03_codigo, c02_codigo) VALUES (CONCAT('$sinal',(TIME_TO_SEC('$tempo_valor')), '.', $parte_decimal), '$tempo_tipo', 'O', $veiculo, $trecho)";
-		
 		$sql[] = "INSERT INTO t01_tempos (c01_valor, c01_tipo, c01_status, c03_codigo, c02_codigo, c01_sigla) VALUES (CONCAT('$sinal',(TIME_TO_SEC('$tempo_valor')), '.', $parte_decimal), '$tempo_tipo', 'O', $veiculo, $trecho, '$_SESSION[usuario_sigla]')";
-		
 		break;
 	
 	case "MUDA_OBS":
@@ -96,13 +76,7 @@ switch (strtoupper($acao)) {
 //
 if (ControleBDFactory::getControlador(DB_DRIVER)->executa($sql)) {
   $alert = "alert('CONFIRMAÇÃO:\\n\\nRegistro alterado ou inserido com sucesso. Para que a visualização da linha fique correta perante seu status, caso este tenha mudado, torna-se necessário recarregar a página.')";
-  //$href = "location.href = 'ssl.php?trecho=$trecho&modalidade=$modalidade'";
 }
+
 printf("<script>$alert</script>");
-
-//
-
-//print_r($sql);
-
-
 ?>
