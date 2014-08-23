@@ -48,7 +48,7 @@ foreach ($lista_array_ss as $v) {
 	//POS
 	$lista_ss[$i] = array();
 	array_push($lista_ss[$i], "<b>".$v['pos']."</b>");
-	
+
 	//NO
 	array_push($lista_ss[$i], $v['numeral']);
 
@@ -57,33 +57,37 @@ foreach ($lista_array_ss as $v) {
 	if (strlen($v['modelo']) > 0) $tripulacao .= $v['modelo'];
 	$tripulacao .= '</div>';
 	array_push($lista_ss[$i], $tripulacao);
-	
+
 	//LICENCA FIM
 	if (isset($_REQUEST["fim"])) array_push($lista_ss[$i], $v['licenca']);
-	
+
 	//EQUIPE
 	array_push($lista_ss[$i], '<div class="trip" id="div">'.nomeComp($v['equipe']).'</div>');
-	
+
 	//POS(CAT)
 	if (!isset($_REQUEST["categoria"])) array_push($lista_ss[$i], $v['categoria']);
-	
+
 	////LARGADA E CHEGADA - apenas no detalhado
 	if (isset($_REQUEST["detalhado"])) {
 		array_push($lista_ss[$i], $v['L']);
 		array_push($lista_ss[$i], $v['C']);
 	}
-	
+
+	//
+	if ($_REQUEST['trecho']==0) $length_str = 10;
+	else $length_str = 8;
+
 	//TEMPO	BRUTO
-	array_push($lista_ss[$i], '<b>'.substr($v['tempo'],0,8)."</b>");
-	
+	array_push($lista_ss[$i], '<b>'.substr($v['tempo'],0,$length_str)."</b>");
+
 	//PENAIS - BONUS
 	$str_penais_bonus = '<div style="color:red">'.substr($v['penalidade'],0,8)."</div>";
 	$str_penais_bonus .= '<div style="color:blue"><br>'.substr($v['bonus'],0,8)."</div>";
 	array_push($lista_ss[$i], $str_penais_bonus);
-	
+
 	//TEMPO - DIF. LIDER
-	$str_tempo_total = '<div style="font-size:14px"><b>'.substr($v['total'],0,8)."</b></div>";
-	$str_tempo_total .='<br>'.substr($v['diferenca_lider'],0,8);
+	$str_tempo_total = '<div style="font-size:14px"><b>'.substr($v['total'],0,$length_str)."</b></div>";
+	$str_tempo_total .='<br>'.substr($v['diferenca_lider'],0,$length_str);
 	array_push($lista_ss[$i], $str_tempo_total);
 	$i++;
 }
@@ -118,7 +122,7 @@ array_push($campos_header_ss,'TOTAL<div style="font-size:10px"><br>Dif. Lider</d
 
 	<body marginheight="0" marginwidth="0" leftmargin="0" topmargin="0" bgcolor="#000000">
 		<? echo printHeader(
-					geraTxtPag("ss",$_REQUEST["trechos"], $numero_trecho), 
+					geraTxtPag("ss",$_REQUEST["trechos"], $numero_trecho),
 					geraTxtTimestamp($int_id_cat, $_REQUEST["modalidade"], $_REQUEST["mod"], $_REQUEST["oficial"]), $_REQUEST["fim"]); ?>
 		<table border="0" cellpadding="0" cellspacing="0" bgcolor="#000000" align="center" width="100%">
 			<tr>
