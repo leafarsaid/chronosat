@@ -7,7 +7,7 @@ header("Pragma: no-cache", true);
 
 //$db = $_REQUEST["db"];
 $valor_get = explode(",",$_GET["valor"]);
-$_REQUEST["db"] = $valor_get[2];
+//$_REQUEST["db"] = $valor_get[2];
 
 //
 require_once "util/database/include/config_bd.inc.php";
@@ -36,28 +36,28 @@ switch (strtoupper($acao)) {
 		$alert = "alert('ERRO:\\n\\nFalha ao desoficializar tempo')";
 		$sql = "UPDATE t01_tempos SET c01_status = 'E' WHERE c01_codigo = $tempo_codigo";
 		break;
-		
+
 	case "EXTODOS":
 		$sql = "UPDATE t01_tempos SET c01_status = 'E' WHERE c01_tipo = '$tempo_tipo' AND c03_codigo = $veiculo AND c02_codigo = $trecho";
 		$alert = "alert('ERRO:\\n\\nFalha ao desoficializar tempos - $sql')";
 		break;
-	
+
 	case "OFICIAL":
 		$alert = "alert('ERRO:\\n\\nFalha ao oficializar tempo')";
 		$sql[] = "UPDATE t01_tempos SET c01_status = 'E' WHERE c01_tipo = '$tempo_tipo' AND c03_codigo = $veiculo AND c02_codigo = $trecho";
 		$sql[] = "UPDATE t01_tempos SET c01_status = 'O' WHERE c01_codigo = $tempo_codigo";
 		break;
-	
+
 	case "HABILITAR":
 		$alert = "alert('ERRO:\\n\\nFalha ao habilitar penalizações automáticas')";
 		$sql = "UPDATE t05_trechomodalidade SET c05_status = 'P' WHERE c02_codigo = $trecho AND c10_codigo = $modalidade";
 		break;
-	
+
 	case "DESABILITAR":
 		$alert = "alert('ERRO:\\n\\nFalha ao desabilitar penalizações automáticas')";
 		$sql = "UPDATE t05_trechomodalidade SET c05_status = 'N' WHERE c02_codigo = $trecho AND c10_codigo = $modalidade";
 		break;
-	
+
 	case "ADD_TEMPO":
 		$parte_decimal = end(explode('.', $tempo_valor));
 		$parte_decimal = str_pad($parte_decimal, 2, '0', STR_PAD_RIGHT);
@@ -66,7 +66,7 @@ switch (strtoupper($acao)) {
 		$sql[] = "UPDATE t01_tempos SET c01_status = 'E' WHERE c01_tipo = '$tempo_tipo' AND c03_codigo = $veiculo AND c02_codigo = $trecho";
 		$sql[] = "INSERT INTO t01_tempos (c01_valor, c01_tipo, c01_status, c03_codigo, c02_codigo, c01_sigla) VALUES (CONCAT('$sinal',(TIME_TO_SEC('$tempo_valor')), '.', $parte_decimal), '$tempo_tipo', 'O', $veiculo, $trecho, '$_SESSION[usuario_sigla]')";
 		break;
-	
+
 	case "MUDA_OBS":
 		$alert = "alert('ERRO:\\n\\nFalha ao mudar a observacao')";
 		$sql = "UPDATE t01_tempos SET c01_obs = '$txt_obs' WHERE c01_codigo = $id_tempo";
