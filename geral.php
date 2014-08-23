@@ -51,7 +51,7 @@ foreach ($lista_array as $v) {
 	//POS
 	$lista[$i] = array();
 	array_push($lista[$i], "<b>".$v['pos']."</b>");
-	
+
 	//NO
 	array_push($lista[$i], $v['numeral']);
 
@@ -60,27 +60,29 @@ foreach ($lista_array as $v) {
 	if (strlen($v['modelo']) > 0) $tripulacao .= $v['modelo']."<br>";
 	$tripulacao .= '</div>';
 	array_push($lista[$i], $tripulacao);
-	
+
 	//LICENCA FIM
 	if (isset($_REQUEST["fim"])) array_push($lista[$i], $v['licenca']);
-	
+
 	//EQUIPE
 	array_push($lista[$i], '<div class="trip" id="div">'.nomeComp($v['equipe']).'</div>');
-	
+
 	//POS(CAT)
 	if (!isset($_REQUEST["categoria"])) array_push($lista[$i], $v['categoria']);
-	
+
 	//TEMPOS DE CADA SS
-	foreach ($arr_ss as $x) array_push($lista[$i],substr($v['ss'.$x],0,8));
-	
+	if ($int_id_ss==0) $length_str = 10;
+	else $length_str = 8;
+	foreach ($arr_ss as $x) array_push($lista[$i],substr($v['ss'.$x],0,$length_str));
+
 	//TEMPO	BRUTO
 	array_push($lista[$i], '<b>'.substr($v['tempo'],0,8)."</b>");
-	
+
 	//PENAIS - BONUS
 	$str_penais_bonus = '<div style="color:red">'.substr($v['penalidade'],0,8)."</div>";
 	$str_penais_bonus .= '<div style="color:blue"><br>'.substr($v['bonus'],0,8)."</div>";
 	array_push($lista[$i], $str_penais_bonus);
-	
+
 	//TEMPO TOTAL - DIF. LIDER
 	$str_tempo_total = '<div style="font-size:14px"><b>'.substr($v['total'],0,8)."</b></div>";
 	$str_tempo_total .='<br>'.substr($v['diferenca_lider'],0,8);
@@ -121,7 +123,7 @@ array_push($campos_header_ss,'TOTAL<div style="font-size:10px"><br>Dif. Lider</d
 
 	<body marginheight="0" marginwidth="0" leftmargin="0" topmargin="0" bgcolor="#000000">
 		<? echo printHeader(
-					geraTxtPag("geral",$_REQUEST["trechos"], $numero_trecho), 
+					geraTxtPag("geral",$_REQUEST["trechos"], $numero_trecho),
 					geraTxtTimestamp($int_id_cat, $_REQUEST["modalidade"], $_REQUEST["mod"], $_REQUEST["oficial"]), $_REQUEST["fim"]); ?>
 		<table border="0" cellpadding="0" cellspacing="0" bgcolor="#000000" align="center" width="100%">
 			<tr>
