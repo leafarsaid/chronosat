@@ -20,16 +20,21 @@ require_once "util/especiais.php";
 
 // obtendo parametros da querystring
 $int_id_ss=(int)$_REQUEST["trecho"];
-$int_id_cat=(int)$_REQUEST["categoria"];
+$int_id_cat= ($_REQUEST["subcategoria"]) ? (int)$_REQUEST["subcategoria"] : (int)$_REQUEST["categoria"];
+if (isset($trecho_final)) $numero_trecho = $trecho_final;
+else if ($int_id_ss) $numero_trecho = $int_id_ss;
+
+$strBaseURL = 'http://'.$_SERVER['HTTP_HOST'].$_SERVER['PHP_SELF'];
+$exp = explode('/', $strBaseURL);
+array_pop($exp);
+$strBaseURL = implode('/', $exp);
 
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 // populando a lista de valores
-$lista = array();
-$xml_src = "http://".$_SERVER[HTTP_HOST]."/2014/Jaja/sertoes/geralXML.php?".$_SERVER['QUERY_STRING'];
+$xml_src = $strBaseURL."/geralXML.php?".$_SERVER['QUERY_STRING'];
 $xml = simplexml_load_file($xml_src);
 $lista_array = array();
-
 for ($i = 0; $i < count($xml); $i++) {
 	foreach($xml->veiculo[$i]->attributes() as $key => $value) {
 		$lista_array[$i][$key] = (string)$value;
@@ -40,73 +45,64 @@ for ($i = 0; $i < count($xml); $i++) {
 //--------------------------------------------------------------------------
 // Tabelão de dados a serem exibidos
 $i = 0;
+$lista = array();
 foreach ($lista_array as $v) {
+
+	//POS
 	$lista[$i] = array();
+	array_push($lista[$i], "<b>".$v['pos']."</b>");
 	
-    array_push($lista[$i], "<b>".$v['colocacao']."</b>");
-	$str_numeral = $v['numeral'];
-    array_push($lista[$i], $str_numeral);
+	//NO
+	array_push($lista[$i], $v['numeral']);
 
-	$piloto = nomeComp($v['piloto']);
-	$navegador = nomeComp($v['navegador']);
-	$tripulacao = '<div class="trip" id="div">';
-
-	if (strlen($piloto) > 0) $tripulacao .= "<b>".$piloto."</b><br>";
-	if (strlen($navegador) > 0) $tripulacao .= "<b>".$navegador."</b><br>";
+	//TRIPULACAO
+	$tripulacao = '<div class="trip" id="div"><b>'.nomeComp($v['tripulacao']).'</b><br>';
 	if (strlen($v['modelo']) > 0) $tripulacao .= $v['modelo']."<br>";
 	$tripulacao .= '</div>';
 	array_push($lista[$i], $tripulacao);
 	
-	//array_push($lista[$i], '<div class="trip" id="div">'.$v['equipe'].'</div>');
+	//LICENCA FIM
+	if (isset($_REQUEST["fim"])) array_push($lista[$i], $v['licenca']);
 	
+	//EQUIPE
+	array_push($lista[$i], '<div class="trip" id="div">'.nomeComp($v['equipe']).'</div>');
+	
+	//POS(CAT)
 	if (!isset($_REQUEST["categoria"])) array_push($lista[$i], $v['categoria']);
 	
-	foreach ($arr_ss as $x) array_push($lista[$i],substr($v['ss'.$x],3,10));
-		
-	$str_tempo = '<b>'.substr($v['tempo'],1,10)."</b>";
-	$str_tempo .='<div style="color:red"><br>'.substr($v['penalidade'],0,8)."</div>";
-	array_push($lista[$i], $str_tempo );
+	//TEMPOS DE CADA SS
+	foreach ($arr_ss as $x) array_push($lista[$i],substr($v['ss'.$x],0,8));
 	
-	$str_tempo_total = '<div style="font-size:14px"><b>'.substr($v['total'],1,10)."</b></div>";
-	$str_tempo_total .='<br>'.substr($v['diferenca_lider'],3,10)."</div>";
+	//TEMPO	BRUTO
+	array_push($lista[$i], '<b>'.substr($v['tempo'],0,8)."</b>");
+	
+	//PENAIS - BONUS
+	$str_penais_bonus = '<div style="color:red">'.substr($v['penalidade'],0,8)."</div>";
+	$str_penais_bonus .= '<div style="color:blue"><br>'.substr($v['bonus'],0,8)."</div>";
+	array_push($lista[$i], $str_penais_bonus);
+	
+	//TEMPO TOTAL - DIF. LIDER
+	$str_tempo_total = '<div style="font-size:14px"><b>'.substr($v['total'],0,8)."</b></div>";
+	$str_tempo_total .='<br>'.substr($v['diferenca_lider'],0,8);
 	array_push($lista[$i], $str_tempo_total);
 	$i++;
 }
 
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
-// Definindo o que vai no header da página
-if (isset($trecho_final)) $numero_trecho = $trecho_final;
-else if ($int_id_ss) $numero_trecho = $int_id_ss;
-
-$tre = criaArray ("SELECT * FROM t02_trecho WHERE c02_codigo=".$numero_trecho);
-$dist_esp_tot = $tre[0]["c02_distancia"] + $tre[0]["c02_desl_ini"] + $tre[0]["c02_desl_fin"];
-
-$trecho_txt1 = ($_REQUEST["trechos"]) ? "RESULTADOS ACUMULADOS ": "ACUMULADO AT&Eacute; A ESPECIAL: SS ".$numero_trecho."   -   ".$tre[0]["c02_nome"]." (".$dist_esp_tot."km)";
-
-$txt_especifico = date("d/m/Y  -  H:i:s");
-$txt_especifico .= (($_REQUEST["oficial"] == 1)) ? "<br>Resultados Oficiais" : "<br>Resultados Extra-Oficiais";
-
-if ($_REQUEST["categoria"]) {
-	$cat = criaArray ("SELECT * FROM t13_categoria WHERE c13_codigo=".$_REQUEST["categoria"]);
-	$txt_especifico .= "<br><font size='4'><b>Categoria: ".$cat[0]["c13_descricao"]."</b></font>";
-}
-
-//--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
 // campos do cabecalho da tabela
-
 $campos_header_ss = array();
-
 array_push($campos_header_ss,"POS");
 array_push($campos_header_ss,"NO");
 array_push($campos_header_ss,'<div class="trip" id="div">PILOTO/NAVEGADOR</div>');
-//array_push($campos_header_ss,'<div class="trip" id="div">EQUIPE</div>');
+if (isset($_REQUEST["fim"])) array_push($campos_header_ss,"FIM No.");
+array_push($campos_header_ss,'<div class="trip" id="div">EQUIPE</div>');
 if (!isset($_REQUEST["categoria"])) array_push($campos_header_ss,"(POS)CAT");
 
-foreach ($arr_ss as $x) array_push($campos_header_ss,($x == "0") ? "QS" : "SS".$x);
+foreach ($arr_ss as $x) array_push($campos_header_ss,($x == "0") ? "PROL." : "ET. ".$x);
 
-array_push($campos_header_ss,'Tempo<div style="font-size:10px;color:red"><br>Penal</div>');
+array_push($campos_header_ss,'TEMPO');
+array_push($campos_header_ss,'<div style="color:red">Penal</div><div style="color:blue"><br>Bonus</div>');
 array_push($campos_header_ss,'TOTAL<div style="font-size:10px"><br>Dif. Lider</div>');
 
 //--------------------------------------------------------------------------
@@ -124,7 +120,9 @@ array_push($campos_header_ss,'TOTAL<div style="font-size:10px"><br>Dif. Lider</d
 	</head>
 
 	<body marginheight="0" marginwidth="0" leftmargin="0" topmargin="0" bgcolor="#000000">
-		<? echo printHeader($numero_trecho, $trecho_txt1, $txt_especifico); ?>
+		<? echo printHeader(
+					geraTxtPag("geral",$_REQUEST["trechos"], $numero_trecho), 
+					geraTxtTimestamp($int_id_cat, $_REQUEST["modalidade"], $_REQUEST["mod"], $_REQUEST["oficial"]), $_REQUEST["fim"]); ?>
 		<table border="0" cellpadding="0" cellspacing="0" bgcolor="#000000" align="center" width="100%">
 			<tr>
 				<td height="60" colspan="0" valign="top">
@@ -138,6 +136,6 @@ array_push($campos_header_ss,'TOTAL<div style="font-size:10px"><br>Dif. Lider</d
 				</td>
 			</tr>
 		</table>
-		<? echo geraFooter(); ?>
+		<? echo geraFooter($_REQUEST["categoria"], $_REQUEST["modalidade"], $_REQUEST["mod"]); ?>
 	</body>
 </html>

@@ -7,17 +7,17 @@ define("DB_DRIVER", "mysql");
 $sUserBanco = "";
 $sServer = "";
 
-if($_REQUEST["bd"] == 2) {
+if ($_REQUEST["db"] == 2) {
 	$sUserBanco = "chronosat2";
 	$sServer = "mysql03.chronosat.com.br";
-} elseif($_REQUEST["bd"] == 3){
+} elseif ($_REQUEST["db"] == 3){
 	$sUserBanco = "chronosat3";
 	$sServer = "mysql04.chronosat.com.br";
 } else {
 	$sUserBanco = "chronosat1";
 	$sServer = "mysql02.chronosat.com.br";
 }
-	
+
 if($_SERVER[HTTP_HOST]=="www.chronosat.com.br" || $_SERVER[HTTP_HOST]=="www.chronosat.com") {
     define("DB_HOST", $sServer);
     define("DB_USER", $sUserBanco);

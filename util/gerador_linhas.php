@@ -1,6 +1,6 @@
 <?
 
-require_once "util/database/include/config1_bd.inc.php";
+require_once "util/database/include/config_bd.inc.php";
 require_once "util/database/class/ControleBDFactory.class.php";
 
 /*
@@ -8,13 +8,15 @@ require_once "util/database/class/ControleBDFactory.class.php";
     funcoes para gerar linhas de relatorios
 	----------------------------------------------------------------------------- 
 */
-function printHeader($trecho, $trecho_txt1, $txt_especifico) {
+function printHeader($txt_pag, $txt_timestamp,$iFIM) {
 	global $prova;
 
 	$parametros = criaArray ("SELECT * FROM t11_prova"); 
 	$nome_rally = "<b>".$parametros[0]["c11_titulo"]."</b>";	
-	$nome_rally .= "<br/><b>".$parametros[0]["c11_subtitulo"]."</b>";       	
-	if ($prova) $nome_rally .= "<br>Prova ".$prova;
+	$nome_rally .= ($iFIM) ? 
+						"<font size='1'><br><b>IMN: 801/05, 810/05, 811/05, 812/05, 813/05</b></font><br>" : 
+						"<br/><b>".$parametros[0]["c11_subtitulo"]."</b>";
+	//if ($prova) $nome_rally .= "<br>Prova ".$prova;
 	
 	$header .= sprintf("%s\n","  <table border=\"0\" width=\"100%\" cellpadding=5 cellspacing=0>");
 	$header .= sprintf("%s\n","   <tr class=\"bg_header\">");
@@ -25,11 +27,11 @@ function printHeader($trecho, $trecho_txt1, $txt_especifico) {
 	
 	$header .= sprintf("%s\n","    <td align=\"left\" valign=\"top\" style=\"font-family: Arial Narrow;\">");
 	//if (isset($_REQUEST["titulo"])) $txt_cab .= "<br>".$_REQUEST["titulo"];
-	$header .= sprintf("%s<br>%s\n",$nome_rally, $trecho_txt1);
+	$header .= sprintf("%s<br>%s\n",$nome_rally, $txt_pag);
 	$header .= sprintf("%s\n","    </td>");
 	
 	$header .= sprintf("%s\n","    <td align=\"left\" valign=\"top\" style=\"font-family: Arial Narrow;\">");
-	$header .= sprintf("%s\n",$txt_especifico);
+	$header .= sprintf("%s\n",$txt_timestamp);
 	$header .= sprintf("%s\n","    </td>");
 	
 	$header .= sprintf("%s\n","    <td align=\"right\" valign=\"top\">");
@@ -66,8 +68,7 @@ function nomeComp($nome_original) {
 *
 *
 */
-function xml2array ( $xmlObject, $out = array () )
-{
+function xml2array ( $xmlObject, $out = array ()){
 	foreach ( (array) $xmlObject as $index => $node )
 		$out[$index] = ( is_object ( $node ) ) ? xml2array ( $node ) : $node;
 
@@ -137,7 +138,7 @@ function secToTime($time){
 		$texto .= str_pad($dec, 2, "0", STR_PAD_RIGHT);
 
     	return $texto;
-	}	
+	}
 	else return (bool) FALSE;
 }
 
@@ -171,7 +172,6 @@ function concat() {
 	return $array;
 }
 
-
 /**
 *  Esta função faz as consultas no banco de dados!
 *
@@ -198,7 +198,7 @@ function geraLinhaXML ($nome, $arr_comp, $arr_header) {
 	$linha = '';
 	for ($i = 0; $i < count($arr_comp); $i++) {
 		$linha = sprintf("<");
-		$linha .= sprintf("%s",$nome);		
+		$linha .= sprintf("%s",$nome);
 		for ($j = 0; $j < count($arr_header); $j++) 
 			$linha .= sprintf(" %s=\"%s\"",$arr_header[$j],utf8_encode($arr_comp[$i][$j]));
 		$linha .= sprintf(" />");
@@ -296,7 +296,7 @@ function geraLinhaHtml2 ($arr_comp) {
 *
 *
 */
-function geraFooter () {
+function geraFooter($iCat, $iMod, $strMod) {
 	$footer = "";
 	$footer .= sprintf("%s\n","<table border=0 width=\"100%\">");
 	$footer .= sprintf("%s\n","<tr class=\"bg_header\">");
@@ -310,8 +310,49 @@ function geraFooter () {
 	$footer .= sprintf("%s\n","     <img src=\"imagens/patr4.jpg\" border=0 align=\"absmiddle\"/>");
 	
 	$footer .= sprintf("%s\n"," </td><td align=\"right\">");
-	$footer .= sprintf("%s   ","<img src=\"imagens/ass_dunas_cba_chrono.png\" width=250 border=0 align=\"absmiddle\"/>");
+	$footer .= (($iCat > 40) || ($iMod > 3) || ($strMod == "C")) ? 
+					sprintf("%s   ","<img src=\"imagens/ass_dunas_cba_chrono.png\" width=300 border=0 align=\"absmiddle\"/>") : 
+					sprintf("%s   ","<img src=\"imagens/ass_dunas_fim_chrono.png\" width=300 border=0 align=\"absmiddle\"/>");
 	$footer .= sprintf("%s\n","</td></tr></table>");
 	return $footer;
 }
+
+/**
+*
+*
+*/
+function geraTxtPag($sPag, $sTrechos, $iTrecho) {
+	$tre = criaArray ("SELECT * FROM t02_trecho WHERE c02_codigo=".$iTrecho);
+	$dist_esp_tot = $tre[0]["c02_distancia"] + $tre[0]["c02_desl_ini"] + $tre[0]["c02_desl_fin"];
+
+	$txt_Pag = ($sPag == "geral") ? (($sTrechos) ? "RESULTADOS ACUMULADOS ": "ACUMULADO AT&Eacute; ") : "";
+	$txt_Pag .= $tre[0]["c02_nome"].": ".$tre[0]["c02_origem"]." - ".$tre[0]["c02_destino"]." (".$dist_esp_tot."km)";
+	
+	return $txt_Pag;
+}
+
+/**
+*
+*
+*/
+function geraTxtTimestamp($iCat, $iMod, $strMod, $iOficial) {
+	$txt_especifico = date("d/m/Y  -  H:i:s");
+	$txt_especifico .= ($iOficial) ? "<br>Resultados Oficiais" : "<br>Resultados Extra-Oficiais";
+
+	if ($iCat) {
+		$temp = criaArray("SELECT c13_descricao AS descricao FROM t13_categoria WHERE c13_codigo=".$iCat);
+		$txt_especifico .= "<br><font size='4'><b>Categoria: ".$temp[0]["descricao"]."</b></font>";
+	}
+	elseif ($iMod) {
+		$temp = criaArray ("SELECT c10_descricao AS descricao FROM t10_modalidade WHERE c10_codigo=".$_REQUEST["modalidade"]);
+		$txt_especifico .= "<br><font size='4'><b>Categoria: ".$temp[0]["descricao"]."</b></font>";
+	}
+	elseif ($strMod) {
+		if ($strMod == "M") $txt_especifico .= "<br><font size='4'><b>MOTOS/QUADS/UTVs</b></font>";
+		elseif ($strMod == "C") $txt_especifico .= "<br><font size='4'><b>CARROS/CAMINHOES</b></font>";
+	}
+	
+	return $txt_especifico;
+}
+
 ?>

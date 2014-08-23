@@ -59,9 +59,9 @@ $obj_res=$obj_controle->executa($sql,true);
 	<tr>
 		<td align="center">Trecho</td>
 		<td align="center">Modalidade</td>
-		<td align="center">Extensão (m)</td>
+		<td align="center">Extensão(Km)</td>
 		<td align="center">Tempo Máximo</td>
-		<td align="center">Penalidade</td>
+		<td align="center">Forfete</td>
 		<td align="center">Máximo em Penalidades</td>
 		<td align="center">Status</td>
 	</tr>
@@ -72,14 +72,14 @@ $obj_res=$obj_controle->executa($sql,true);
 	<tr class="linhas">
 		<td><?=$vet_linha["c02_nome"]?></td>
 		<td><?=$vet_linha["c10_nome"]?></td>
-		<td><input name="ext[<?=$idx?>]" size="15" maxlength="15" value="<?=$vet_linha["c05_extensao"]?>"></td>
-		<td><input name="tmx[<?=$idx?>]" size="15" maxlength="15" value="<?=$vet_linha["c05_tempomax"]?>"></td>
-		<td><input name="pen[<?=$idx?>]" size="15" maxlength="15" value="<?=$vet_linha["c05_penalidade"]?>"></td>
-        <td><input name="penamax[<?=$idx?>]" size="15" maxlength="15" value="<?=$vet_linha["c05_penamax"]?>"></td>
+		<td><input name="ext[<?=$idx?>]" size="4" maxlength="15" value="<?=$vet_linha["c05_extensao"]?>"></td>
+		<td><input name="tmx[<?=$idx?>]" size="6" maxlength="15" value="<?=$vet_linha["c05_tempomax"]?>"></td>
+		<td><input name="pen[<?=$idx?>]" size="6" maxlength="15" value="<?=$vet_linha["c05_penalidade"]?>"></td>
+        <td><input name="penamax[<?=$idx?>]" size="6" maxlength="15" value="<?=$vet_linha["c05_penamax"]?>"></td>
 		<td>
 			<select name="status[<?=$idx?>]">
 				<option value="N">Normal</option>
-				<option value="P"<? if($vet_linha["c05_status"]=="P") echo " selected" ?>>Penalização Automática</option>
+				<option value="P"<? if($vet_linha["c05_status"]=="P") echo " selected" ?>>Fechado</option>
 			</select>
 		</td>
 		<td>

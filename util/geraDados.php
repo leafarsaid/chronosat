@@ -1,122 +1,201 @@
 <?
-
-function geraDados($arr_comp) {
-	$retorno = '';
+/**
+*
+*
+*/
+///----------------------------------------------------------------------------------------------------------------------------------
+function geraDadosGeral($arr_comp, $iFIM) {
 	$arr_retorno = array();
 
-	global $pos_cat;
+	$pos_cat = array();
 	global $arr_ss;
-	$col_stat = "c03_status";
 
 	for ($i = 0; $i < count($arr_comp); $i++) {
 		$arr_retorno[$i] = array();
-		$cat_num = $arr_comp[$i]["c13_codigo"];
+		$cat = $arr_comp[$i]["categoria"];
 
-		/////////////////////////////
-		$stat = $arr_comp[$i][$col_stat];
-		//
-		if ($arr_comp[$i]["total_geral"] != "* * *") { 
-			if ($stat == "N") $txt_pos = ($i + 1);
+		//POS
+		$stat = $arr_comp[$i]["_status"];
+		$txt_pos = $stat;
+		$txt_pos_cat = $stat;
+		if (($arr_comp[$i]["tempo"] != "* * *") && ($stat == "N")) {
+			$pos_cat[$cat][0]++;
+			$txt_pos_cat = $pos_cat[$cat][0];
+			$txt_pos = ($i + 1);
 		}
 		else {
-			$txt_pos = "NC";
+			$txt_pos = ($stat == "N") ? (($iFIM) ? "DNF" : "NC") : $stat;
+			$txt_pos_cat = $txt_pos;
+		}
+		array_push($arr_retorno[$i],$txt_pos);
+
+		//COMPETIDOR
+		array_push($arr_retorno[$i],$arr_comp[$i]["numeral"]);
+		array_push($arr_retorno[$i],htmlspecialchars($arr_comp[$i]["tripulacao"]));
+		array_push($arr_retorno[$i],htmlspecialchars($arr_comp[$i]["modelo"]));
+		array_push($arr_retorno[$i],$arr_comp[$i]["licenca"]);
+		array_push($arr_retorno[$i],htmlspecialchars($arr_comp[$i]["equipe"]));
+		
+		//POS(CAT)
+		array_push($arr_retorno[$i],"(".$txt_pos_cat.")".$arr_comp[$i]["categoria"]);
+		
+		//TEMPOS DE CADA SS
+		foreach ($arr_ss as $x) {
+			$strTempo = ($stat == "D") ? "* * *" : $arr_comp[$i]["ss".$x];
+			array_push($arr_retorno[$i],$strTempo);
 		}
 		
-		if ($stat == "NC" || $stat == "D") $txt_pos = $stat;
+		//TEMPOS
+		if (($arr_comp[$i]["tempo"] != "* * *") && ($stat <> "D")) { 
+			array_push($arr_retorno[$i],$arr_comp[$i]["tempo"]); 		//tempo sem penalidades
+			array_push($arr_retorno[$i],($stat == "N") ? $arr_comp[$i]["penais"] : "* * *");	//total de penalidades
+			array_push($arr_retorno[$i],$arr_comp[$i]["bonus"]);	//total de bonus
+			array_push($arr_retorno[$i],substr(secToTime($arr_comp[$i]["tempoTotal"]),0,8));	//tempo total
+			array_push($arr_retorno[$i],($i != 0) ? substr(secToTime($arr_comp[$i]["tempoTotal"]-$arr_comp[0]["tempoTotal"]),0,8) : "*"); //dif. lider
+		}
+		else
+		{
+			array_push($arr_retorno[$i],"* * *");	//tempo sem penalidades
+			array_push($arr_retorno[$i],"* * *");	//total de penalidades
+			array_push($arr_retorno[$i],"* * *");	//total de bonus
+			array_push($arr_retorno[$i],"* * *");	//tempo total
+			array_push($arr_retorno[$i],"* * *");	//dif. lider
+		}
+	}
+	return $arr_retorno;
+}
+
+/**
+*
+*
+*/
+///----------------------------------------------------------------------------------------------------------------------------------
+function geraDadosSS($arr_comp, $iFIM) {
+	$arr_retorno = array();
+	$pos_cat = array();
+
+	for ($i = 0; $i < count($arr_comp); $i++) {
+		$arr_retorno[$i] = array();
+		$cat = $arr_comp[$i]["categoria"];
+
+		//POS
+		$stat = $arr_comp[$i]["_status"];
+		$txt_pos = $stat;
+		$txt_pos_cat = $stat;
+		if (($arr_comp[$i]["tempo"] != 0) && ($stat == "N")) {
+			$pos_cat[$cat][0]++;
+			$txt_pos_cat = $pos_cat[$cat][0];
+			$txt_pos = ($i + 1);
+		}
+		elseif ($stat == "N") {
+			//Se não chegou e tem largada = NC
+			//Se não chegou e não tem largada= NL
+			$txt_pos = ($arr_comp[$i]["L"] != 99999) ? (($iFIM) ? "DNF" : "NC") : (($iFIM) ? "DNS" : "NL");
+			$txt_pos_cat = $txt_pos;
+		}
 		
 		array_push($arr_retorno[$i],$txt_pos);
-		array_push($arr_retorno[$i],$arr_comp[$i]["c03_numero"]);
 
-		$piloto = nomeComp($arr_comp[$i]["piloto_geral"]);
-		$navegador = nomeComp($arr_comp[$i]["navegador_geral"]);
-		$navegador2 = nomeComp($arr_comp[$i]["navegador2_geral"]);
-
-		//
-		array_push($arr_retorno[$i],$piloto);
-		array_push($arr_retorno[$i],$arr_comp[$i]["piloto_origem"]);
-		//
-		array_push($arr_retorno[$i],$navegador);
-		array_push($arr_retorno[$i],$arr_comp[$i]["navegador_origem"]);
-		//
-		array_push($arr_retorno[$i],$navegador2);
-		array_push($arr_retorno[$i],$arr_comp[$i]["navegador2_origem"]);
-
-
-		//
-		array_push($arr_retorno[$i],htmlspecialchars($arr_comp[$i]["modelo_geral"]));
-		array_push($arr_retorno[$i],htmlspecialchars($arr_comp[$i]["equipe_geral"]));
-		array_push($arr_retorno[$i],htmlspecialchars($arr_comp[$i]["c10_codigo"]));
-
-		// se não é desclassificado
-		if ($arr_comp[$i][$col_stat] != 'D') {
-			if ($arr_comp[$i]["total_geral"]!="* * *") 	$txt_pos = $pos_cat[$cat_num][0] + 1;
-			else $txt_pos = 'NC';			
-
-			$pos_cat[$cat_num][0]++;
-			array_push($arr_retorno[$i],"(".$txt_pos.")".$arr_comp[$i]["categoria"]);
+		//COMPETIDOR
+		array_push($arr_retorno[$i],$arr_comp[$i]["numeral"]);
+		array_push($arr_retorno[$i],htmlspecialchars($arr_comp[$i]["tripulacao"]));
+		array_push($arr_retorno[$i],htmlspecialchars($arr_comp[$i]["modelo"]));
+		array_push($arr_retorno[$i],$arr_comp[$i]["licenca"]);
+		array_push($arr_retorno[$i],htmlspecialchars($arr_comp[$i]["equipe"]));
 		
-			$status = $arr_comp[$i][$col_stat];
-			
-			//
-			foreach ($arr_ss as $x) array_push($arr_retorno[$i],$arr_comp[$i]["ss".$x]);
-			
-			//
-			array_push($arr_retorno[$i],$arr_comp[$i]["tempo"]); 		//tempo sem penalidades
-			array_push($arr_retorno[$i],($stat == "N") ? $arr_comp[$i]["P_geral"] : "* * *");	//total de penalidades
-			array_push($arr_retorno[$i],$arr_comp[$i]["bonus_geral"]);	//total de bonus
-			array_push($arr_retorno[$i],$arr_comp[$i]["total_geral"]);	//tempo total 
-
-			//
-			$l = $i - 1;
-			if ($l < 0) $l = 0;
-			if ($arr_comp[$i]["total_geral"]!="* * *" && $arr_comp[$i][$col_stat] != 'NC') {
-				if ($status == 'D') array_push($arr_retorno[$i],"");
-				else array_push($arr_retorno[$i],substr(secToTime($arr_comp[$i]["total_num"]-$arr_comp[$l]["total_num"]),0,10));
-			
-			}
-			else {
-				array_push($arr_retorno[$i],' ');
-
-			}
-
-			//
-			if ($arr_comp[$i]["total_geral"]!="* * *" && $arr_comp[$i][$col_stat]!='NC') {
-				if ($status == 'D') array_push($arr_retorno[$i],"");
-				else {
-					$valor_diff = $arr_comp[$i]["total_num"]-$arr_comp[0]["total_num"];
-					if ($valor_diff >= 86400 && $valor_diff < 172800) {
-						$txt_dias = "1d ";
-					}
-					elseif ($valor_diff>=172800) {
-						$txt_dias = "2d ";
-					}
-					else $txt_dias = "";
-                 
-				array_push($arr_retorno[$i],$txt_dias.substr(secToTime($valor_diff),0,10));
-				}
-			}
-			else {
-				array_push($arr_retorno[$i],' ');
-			}
-		} // se não é desclassificado
-
-		else { // se é desclassificado
-			array_push($arr_retorno[$i],$arr_comp[$i]["categoria"]);
-			for ($k=0; $k < count($arr_ss); $k++) {
-				if (in_array($k, $arr_ss)) array_push($arr_retorno[$i],"* * *");
-			}
-			
-			array_push($arr_retorno[$i],"* * *");
-			array_push($arr_retorno[$i],"* * *");
-			array_push($arr_retorno[$i],"* * *");
-			array_push($arr_retorno[$i],"* * *");
-			array_push($arr_retorno[$i],"* * *");
-
-			if ($status == 'D' && !$prova) {
-				array_push($arr_retorno[$i],"* * *");
-				array_push($arr_retorno[$i],"* * *");			
-			}
+		//POS(CAT)
+		array_push($arr_retorno[$i],"(".$txt_pos_cat.")".$arr_comp[$i]["categoria"]);
+		
+		//HORA DE LARGADA E CHEGADA
+		array_push($arr_retorno[$i],$arr_comp[$i]["largada"]);		//largada
+		array_push($arr_retorno[$i],$arr_comp[$i]["chegada"]);		//chegada
+		
+		//TEMPOS
+		if (($arr_comp[$i]["tempo"] != 0) && ($stat <> "D")) { 
+			array_push($arr_retorno[$i],substr(secToTime($arr_comp[$i]["tempo"]),0,8));		//tempo sem penalidades
+			array_push($arr_retorno[$i],($stat == "N") ? $arr_comp[$i]["penais"] : "* * *");	//penalidades
+			array_push($arr_retorno[$i],$arr_comp[$i]["bonus"]);	//bonus
+			array_push($arr_retorno[$i],substr(secToTime($arr_comp[$i]["tempoTotal"]),0,8));	//tempo total
+			array_push($arr_retorno[$i],($i != 0) ? substr(secToTime($arr_comp[$i]["tempoTotal"]-$arr_comp[0]["tempoTotal"]),0,8) : "*"); //dif. lider total
+			array_push($arr_retorno[$i],($i != 0) ? substr(secToTime($arr_comp[$i]["tempo"]-$arr_comp[0]["tempo"]),0,8) : "*"); //dif. lider bruto
 		}
+		else
+		{
+			array_push($arr_retorno[$i],"* * *");	//tempo sem penalidades
+			array_push($arr_retorno[$i],"* * *");	//penalidades
+			array_push($arr_retorno[$i],"* * *");	//bonus
+			array_push($arr_retorno[$i],"* * *");	//tempo total
+			array_push($arr_retorno[$i],"* * *");	//dif. lider
+			array_push($arr_retorno[$i],"* * *");	//dif. lider bruto
+		}
+	}
+	return $arr_retorno;
+}
+
+/**
+*
+*
+*/
+///----------------------------------------------------------------------------------------------------------------------------------
+function geraDadosPenal($arr_comp) {
+	$arr_retorno = array();
+	for ($i = 0; $i < count($arr_comp); $i++) {
+		$arr_retorno[$i] = array();
+		
+		//NO
+		array_push($arr_retorno[$i], $arr_comp[$i]['numeral']);
+
+		//TRIPULACAO
+		$tripulacao = '<div class="trip" id="div"><b>'.htmlspecialchars(nomeComp($arr_comp[$i]['tripulacao'])).'</b><br>';
+		if (strlen($arr_comp[$i]['modelo']) > 0) $tripulacao .= $arr_comp[$i]['modelo'];
+		$tripulacao .= '</div>';
+		array_push($arr_retorno[$i],$tripulacao);
+		
+		//Especial
+		array_push($arr_retorno[$i],$arr_comp[$i]['trecho']);
+		
+		// MANUAL OU GPS
+		if ($arr_comp[$i]['tipo']=="P") $tipo = "Manual";
+		elseif ($arr_comp[$i]['tipo']=="PT") $tipo = "GPS";
+		elseif ($arr_comp[$i]['tipo']=="A") $tipo = "Bonus";
+		array_push($arr_retorno[$i], $tipo);
+
+		//tempo de penal
+		array_push($arr_retorno[$i],substr($arr_comp[$i]['P'],0,8));
+
+		//motivo
+		array_push($arr_retorno[$i],'<div class="trip" id="div">'.$arr_comp[$i]['motivo'].'</div>');
+	}
+	return $arr_retorno;
+}
+
+/**
+*
+*
+*/
+///----------------------------------------------------------------------------------------------------------------------------------
+function geraDadosAbandonos($arr_comp) {
+	$arr_retorno = array();
+	for ($i = 0; $i < count($arr_comp); $i++) {
+		$arr_retorno[$i] = array();
+		
+		//Especial
+		array_push($arr_retorno[$i],$arr_comp[$i]['trecho']);
+		
+		//NO
+		array_push($arr_retorno[$i], $arr_comp[$i]['numeral']);
+
+		//TRIPULACAO
+		$tripulacao = '<div class="trip" id="div"><b>'.htmlspecialchars(nomeComp($arr_comp[$i]['tripulacao'])).'</b><br>';
+		if (strlen($arr_comp[$i]['modelo']) > 0) $tripulacao .= $arr_comp[$i]['modelo'];
+		$tripulacao .= '</div>';
+		array_push($arr_retorno[$i],$tripulacao);
+		
+		//EQUIPE
+		array_push($arr_retorno[$i], $arr_comp[$i]['equipe']);
+				
+		//motivo
+		array_push($arr_retorno[$i],'<div class="trip" id="div">'.$arr_comp[$i]['motivo'].'</div>');
 	}
 	return $arr_retorno;
 }

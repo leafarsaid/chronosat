@@ -1,250 +1,139 @@
 <?
-$col_status = ($_REQUEST['prova'] == 2) ? "c03_status2": "c03_status";
-$col_categoria = ($_REQUEST['campeonato'] == "P") ? "c13_codigo2" : "c13_codigo";
+///----------------------------------------------------------------------------------------------------------------------------------
+
+///----------------------------------------------------------------------------------------------------------------------------------
 
 /**
 *
 *
 */
-function geraSqlGeral($int_ss_fim, $arr_ss, $int_id_cat, $int_id_mod, $mod, $classi, $nc, $desc) {
-	global $col_status;
-	global $col_categoria;
-	$ss_max = 50;
+///----------------------------------------------------------------------------------------------------------------------------------
+function geraSqlGeral2($arr_ss, $int_id_cat, $int_id_mod, $mod) {
+	// define qual a coluna de categoria deve ser usada
+	$col_categoria = ($_REQUEST['subcategoria']) ? "c13_codigo2" : "c13_codigo";
 	
-	$str_sql = "SELECT ";
-	$str_sql .= "DISTINCT c03_numero,";
-	$str_sql .= "c03_codigo,";
-	$str_sql .= "c10_codigo,";
-	$str_sql .= "$col_categoria,";
-	$str_sql .= "$col_status,";
+	$str_sql = 'SELECT DISTINCT ';
+	$str_sql .= 'c03_numero AS numeral, ';
+	$str_sql .= 'getTripulanteNome(c03_piloto) AS tripulacao, ';
+	$str_sql .= 'getTripulanteOrigem(c03_piloto) AS origem, ';
+	$str_sql .= 'getEquipeNome(c03_piloto) AS equipe, ';
+	$str_sql .= 'getModeloNome(c03_piloto) AS modelo, ';
+	$str_sql .= 'getPatrocinioNome(c03_piloto) AS licenca, ';
+	$str_sql .= "c03_status AS _status, ";
 	$str_sql .= "getCategoriaNome($col_categoria) AS categoria, ";
 	$str_sql .= 'getModalidadeNome(c10_codigo) AS modalidade, ';
-	$str_sql .= 'getTripulanteNome(c03_piloto) AS piloto_geral, ';
-	$str_sql .= 'getTripulanteNome(c03_navegador) AS navegador_geral, ';
-	$str_sql .= 'getTripulanteNome(c03_navegador2) AS navegador2_geral, ';
-	$str_sql .= 'getEquipeNome(c03_piloto) AS equipe_geral, ';
-	$str_sql .= 'getModeloNome(c03_piloto) AS modelo_geral, ';
-	$str_sql .= "getTripulanteOrigem(c03_piloto) AS tripulacao_origem, ";
-	$str_sql .= "getTripulanteOrigem(c03_piloto) AS piloto_origem, ";
-	$str_sql .= "getTripulanteOrigem(c03_navegador) AS navegador_origem, ";
-
+		
 	//tempo de cada SS
 	for ($f = 0; $f < count($arr_ss); $f++) {
-		$str_sql .= "castTempo(calcTempoSemPena(c03_codigo,".$arr_ss[$f].",c10_codigo,6)) AS ss".$arr_ss[$f].", ";
+		$str_sql .= "castTempo(calcTempoSemPena(c03_codigo,$arr_ss[$f],c10_codigo,6)) AS ss$arr_ss[$f], ";
 	}
-
-	//total de penais
-	$str_sql .= "castTempo(0";
-		for ($f = 0; $f < count($arr_ss); $f++)
-			if ($arr_ss[$f] <= $ss_max) $str_sql .= "+calcPenalidade(c03_codigo,".$arr_ss[$f].", c10_codigo) ";
-	$str_sql .= ") AS P_geral, ";
 	
-	//tempo total sem penais
+	//tempo bruto AS _tempo
 	$str_sql .= "castTempo(0";
 	for ($f = 0; $f < count($arr_ss); $f++)
-		if ($arr_ss[$f]<=$ss_max) $str_sql .= "+calcTempo(c03_codigo,".$arr_ss[$f].",c10_codigo,6)-calcPenalidade(c03_codigo,".$arr_ss[$f].", c10_codigo)";
-	$str_sql .= ") AS tempo_old, ";
-
-	//tempo total 
-	$str_sql .= "castTempo(";
-	$str_sql .= "concat(substring_index(0";
-	for ($f = 0; $f < count($arr_ss); $f++)
-		if ($arr_ss[$f]<=$ss_max) $str_sql .= "+calcTempo(c03_codigo,".$arr_ss[$f].",c10_codigo,6)-calcPenalidade(c03_codigo,".$arr_ss[$f].", c10_codigo)";
-	for ($f=0;$f<count($arr_ss);$f++)
-		if ($arr_ss[$f]<=$ss_max) $str_sql .= "+IFNULL(substring_index(getTempo(c03_codigo,".$arr_ss[$f].",10),'.',1),0) ";
-	$str_sql .= ",'.',2) ";
-	$str_sql .= ") ";
+		$str_sql .= "+calcTempoSemPena(c03_codigo,$arr_ss[$f],c10_codigo,6)";
 	$str_sql .= ") AS tempo, ";
-
-	//total de bonus
-	$str_sql .= "castTempo(0";
-	for ($f=0;$f<count($arr_ss);$f++)
-		if ($arr_ss[$f] <= $ss_max) $str_sql .= "+IFNULL(getTempo(c03_codigo,".$arr_ss[$f].",10),0) ";
-	$str_sql .= ") AS bonus_geral, ";
-
-	//tempo total?
+		
+	//penais AS _penais
 	$str_sql .= "castTempo(0";
 	for ($f = 0; $f < count($arr_ss); $f++)
-		if ($arr_ss[$f] <= $ss_max) $str_sql .= "+calcTempo(c03_codigo,".$arr_ss[$f].",c10_codigo,6) ";
-	$str_sql .= ") AS total_geral, ";
-
-	//??????????????????
-	$str_sql .= "(0";
+		$str_sql .= "+calcPenalidade(c03_codigo,$arr_ss[$f],c10_codigo)";
+	$str_sql .= ") AS penais, ";
+	
+	//bonus AS _bonus
+	$str_sql .= "castTempo(0";
 	for ($f = 0; $f < count($arr_ss); $f++)
-		if ($arr_ss[$f] <= $ss_max) $str_sql .= "+IFNULL(calcTempo(c03_codigo,".$arr_ss[$f].",c10_codigo,6),999999) ";
-	$str_sql .= ") AS total_num ";
-
-	$str_sql .= "FROM ";
-	$str_sql .= "t03_veiculo ";
-	$str_sql .= "WHERE 1 ";
-	$str_sql .= "AND ".$col_status."<>'O' ";
+		$str_sql .= "+IFNULL(getTempo(c03_codigo,$arr_ss[$f],10),0)";
+	$str_sql .= ") AS bonus, ";
 	
-	///////////////////////////
-
-	//consultar apenas os desclassificados?
-	$str_sql .= ($desc == 0) ? "AND ".$col_status."<>'D' " : "AND ".$col_status."='D' ";
-	
-	//consultar apenas os Não Completados?
-	$str_sql .= ($nc == 0) ? "AND ".$col_status."<>'NC' " : "AND ".$col_status."='NC' ";
-	
-	if ($desc != 1) {
-		if ($classi == 1) {
-			$str_sql .= "AND castTempo(0";
-			for ($f = 0; $f < count($arr_ss); $f++) 
-				if ($arr_ss[$f] <= $ss_max) $str_sql .= "+calcTempo(c03_codigo,".$arr_ss[$f].",c10_codigo,6) ";
-			$str_sql .= ") != \"* * *\" ";
-		}
-		else {
-			$str_sql .= "AND castTempo(0";
-			for ($f=0;$f<count($arr_ss);$f++) {
-				if ($arr_ss[$f]<=$ss_max) $str_sql .= "+calcTempo(c03_codigo,".$arr_ss[$f].",c10_codigo,6) ";
-			}
-			$str_sql .= ") = \"* * *\" ";
-		}
+	//tempo total = tempo bruto - penais + bonus AS _tempoTotal
+	$str_sql .= "0";
+	for ($f = 0; $f < count($arr_ss); $f++) {
+		$str_sql .= "+IFNULL(calcTempo(c03_codigo,$arr_ss[$f],c10_codigo,6),999999)";
 	}
+	$str_sql .= " AS tempoTotal, ";
 	
-	///////////////////////////
-
-	if($int_id_cat) $str_sql.="AND $col_categoria=$int_id_cat ";
-	if($int_id_mod) $str_sql.="AND c10_codigo=$int_id_mod ";
-	if($mod=="C") $str_sql.="AND (c10_codigo=1 OR c10_codigo=2) ";
-	if($mod=="M") $str_sql.="AND (c10_codigo=3 OR c10_codigo=4) ";
+	//Largada na última especial - para desempate
+	//quem larga primeiro na especial está na frente no caso de empate
+	$str_sql .= "IFNULL(getTempo(c03_codigo,".$arr_ss[count($arr_ss)-1].",1),999999) AS L ";
 	
-	$str_sql.="ORDER BY total_num,";
-	$str_sql.="c03_ordem,calcTFGeral(c03_codigo,c10_codigo,$int_ss_fim),";
-	$str_sql.="c03_ordem,c03_numero";
+	$str_sql .= "FROM t03_veiculo WHERE (c03_status <> 'O') ";
+	
+	if($int_id_cat) $str_sql.="AND ($col_categoria = $int_id_cat) ";
+	elseif ($int_id_mod) $str_sql.="AND (c10_codigo = $int_id_mod) ";
+	elseif ($mod == "M") $str_sql.="AND (c10_codigo = 1 OR c10_codigo = 2 OR c10_codigo = 3) ";
+	elseif ($mod == "C") $str_sql.="AND (c10_codigo = 4 OR c10_codigo = 5) ";
+	
+	$str_sql.="ORDER BY _status, tempoTotal, L, numeral";
 	
 	return  $str_sql;
 }
-
-
-
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///----------------------------------------------------------------------------------------------------------------------------------
 /**
 *
 *
 */
-function geraSqlSS($int_id_ss, $int_id_cat, $int_id_mod, $campeonato, $mod,  $classi, $nc, $desc, $cheg, $veic) {
-	global $col_categoria;
-	global $col_status;
-	if (!$int_id_ss) $int_id_ss = 0;
+///----------------------------------------------------------------------------------------------------------------------------------
+function geraSqlSS2($int_id_ss, $int_id_cat, $int_id_mod, $mod) {
+
+	// define qual a coluna de categoria deve ser usada
+	$col_categoria = ($_REQUEST['subcategoria']) ? "c13_codigo2" : "c13_codigo";
 	
-	$ss_sql = 'SELECT ';
-	$ss_sql .= "DISTINCT c03_numero,";
-	$ss_sql .= "c03_codigo,";
-	$ss_sql .= $col_status.",";
-	$ss_sql .= 'getTrechoNome('.$int_id_ss.') AS nome_trecho, ';
+	$ss_sql  = 'SELECT ';
+	$ss_sql .= "DISTINCT c03_numero AS numeral, ";
+	$ss_sql .= "c03_status AS _status, ";
+	$ss_sql .= 'getTripulanteNome(c03_piloto) AS tripulacao, ';
+	$ss_sql .= 'getTripulanteOrigem(c03_piloto) AS origem, ';
+	$ss_sql .= 'getEquipeNome(c03_piloto) AS equipe, ';
+	$ss_sql .= 'getModeloNome(c03_piloto) AS modelo, ';
+	$ss_sql .= 'getPatrocinioNome(c03_piloto) AS licenca, ';
 	$ss_sql .= "getCategoriaNome($col_categoria) AS categoria, ";
 	$ss_sql .= 'getModalidadeNome(c10_codigo) AS modalidade, ';
-	$ss_sql .= 'getTripulanteNome(c03_piloto) AS piloto, ';
-	$ss_sql .= 'getTripulanteNome(c03_navegador) AS navegador, ';
-	$ss_sql .= 'getTripulanteNome(c03_navegador2) AS navegador2, ';
-	$ss_sql .= 'getTripulanteOrigem(c03_piloto) AS tripulacao_origem, ';
-	$ss_sql .= 'getModeloNome(c03_piloto) AS modelo, ';
-	$ss_sql .= 'getEquipeNome(c03_piloto) AS equipe, ';
-	$ss_sql .= 'getModalidadeNome(c10_codigo) AS modalidade, ';
-	$ss_sql .= "penalizar($col_categoria,$int_id_ss,c10_codigo) AS forfete, ";
-	$ss_sql .= "$col_categoria, ";
-	$ss_sql .= 'c10_codigo, ';
-	$ss_sql .= 'castTempo(getTempo(c03_codigo,'.$int_id_ss.',1)) AS L, ';
-	$ss_sql .= 'getTempo(c03_codigo,'.$int_id_ss.',9) AS R, ';
-	$ss_sql .= 'castTempo(getTempo(c03_codigo,'.$int_id_ss.',8)) AS CH, ';
-	$ss_sql .= 'castTempo(getTempo(c03_codigo,'.$int_id_ss.',2)) AS I1, ';
-	$ss_sql .= 'castTempo(getTempo(c03_codigo,'.$int_id_ss.',3)) AS I2, ';
-	$ss_sql .= 'castTempo(getTempo(c03_codigo,'.$int_id_ss.',4)) AS I3, ';
-	$ss_sql .= 'castTempo(getTempo(c03_codigo,'.$int_id_ss.',5)) AS I4, ';
-	$ss_sql .= 'castTempo(getTempo(c03_codigo,'.$int_id_ss.',6)) AS C, ';
-	$ss_sql .= 'castTempo(getTempo(c03_codigo,'.$int_id_ss.',10)) AS A, ';
-	$ss_sql .= 'castTempo(calcPenalidade(c03_codigo,'.$int_id_ss.', c10_codigo)) AS P, ';
-	$ss_sql .= "castTempo(calcTempo(c03_codigo,$int_id_ss,c10_codigo,6)) AS total, ";
-	$ss_sql .= "calcTempo(c03_codigo,$int_id_ss,c10_codigo,6) AS total_num, ";
-	$ss_sql .= "castTempo(IFNULL(calcTempo(c03_codigo,$int_id_ss,c10_codigo,6),0) + IFNULL(getTempo(c03_codigo,$int_id_ss,10),0) - IFNULL(calcPenalidade(c03_codigo,$int_id_ss, c10_codigo),0)) AS tempo, ";
-	$ss_sql .= "(CASE WHEN (calcTempo(c03_codigo,$int_id_ss,c10_codigo,6) > 0) THEN calcTempo(c03_codigo,$int_id_ss,c10_codigo,6) ELSE 99999999999999 END) AS total_c, ";
-	$ss_sql .= "castTempo(calcTempoGeral(c03_codigo,c10_codigo,$int_id_ss)) AS geral, ";
-	$ss_sql .= "calcTempoGeral(c03_codigo,c10_codigo,$int_id_ss) AS geral_num, ";
-	$ss_sql .= "(CASE WHEN (calcTempoGeral(c03_codigo,c10_codigo,$int_id_ss) > 0) THEN calcTempoGeral(c03_codigo,c10_codigo,$int_id_ss) ELSE 99999999999999 END) AS geral_c, ";
-	$ss_sql .= "(SELECT c02_distancia FROM t02_trecho where c02_codigo=".$int_id_ss.") / ((calcTempo(c03_codigo,$int_id_ss,c10_codigo,6))/3600) AS velocidade, ";
-
-	///////////// dif -- pega o tempo do primeiro e diminui o tempo do atual
-	$ss_sql .= "castTempo((SELECT calcTempo(c03_codigo,".$int_id_ss.",c10_codigo,6) AS total_cat FROM t03_veiculo WHERE 1 ";
-	$ss_sql .= "AND calcTempo(c03_codigo,".$int_id_ss.",c10_codigo,6)!=1 ";
-	if($int_id_cat) $ss_sql .= "AND $col_categoria=$int_id_cat ";
-	if($int_id_mod) $ss_sql .= "AND c10_codigo=$int_id_mod ";
-	if($campeonato) $ss_sql.="AND getModalidadeNome(c10_codigo) LIKE '%".$campeonato."%' ";
-	$ss_sql .= "ORDER BY total_cat LIMIT 1) - calcTempo(c03_codigo,$int_id_ss,c10_codigo,6)) AS dif1 ";
-	///////////// dif
-
-	$ss_sql.="FROM ";
-	$ss_sql.="t03_veiculo ";
-	$ss_sql .= "WHERE 1 ";
-	if ($veic!="") $ss_sql .= "AND c03_codigo=".$veic." ";
-
-	// caso tenha chegada
-	if ($cheg == 0) {
-		$ss_sql .= "AND castTempo(getTempo(c03_codigo,$int_id_ss,6)) = \"* * *\" ";
-	} else {
-		$ss_sql .= "AND castTempo(getTempo(c03_codigo,$int_id_ss,6)) <> \"* * *\" ";
-	}
+	$ss_sql .= 'IFNULL(getTempo(c03_codigo,'.$int_id_ss.',1),99999) AS L, ';
+	$ss_sql .= 'IFNULL(getTempo(c03_codigo,'.$int_id_ss.',2),99999) AS I1, ';
+	$ss_sql .= 'IFNULL(getTempo(c03_codigo,'.$int_id_ss.',3),99999) AS I2, ';
+	$ss_sql .= 'IFNULL(getTempo(c03_codigo,'.$int_id_ss.',4),99999) AS I3, ';
+	$ss_sql .= 'IFNULL(getTempo(c03_codigo,'.$int_id_ss.',5),99999) AS I4, ';
+	$ss_sql .= 'IFNULL(getTempo(c03_codigo,'.$int_id_ss.',6),99999) AS C, ';
+	$ss_sql .= 'castTempo(getTempo(c03_codigo,'.$int_id_ss.',1)) AS largada, ';
+	$ss_sql .= 'castTempo(getTempo(c03_codigo,'.$int_id_ss.',6)) AS chegada, ';
+	$ss_sql .= 'castTempo(getTempoTodos(c03_codigo,'.$int_id_ss.',10)) AS bonus, ';
+	$ss_sql .= 'castTempo(calcPenalidade(c03_codigo,'.$int_id_ss.', c10_codigo)) AS penais, ';
+	$ss_sql .= "IFNULL(calcTempoSemPena(c03_codigo,$int_id_ss,c10_codigo,6),0) AS tempo, ";
+	$ss_sql .= "IFNULL(calcTempo(c03_codigo,$int_id_ss,c10_codigo,6),999999) AS tempoTotal ";
 	
-	// caso desc
-	if ($desc==0) {
-		$ss_sql .= "AND ".$col_status."<>'D' ";
-	} else {
-		$ss_sql .= "AND ".$col_status."='D' ";
-	}
+	$ss_sql .= "FROM t03_veiculo WHERE (c03_status <> 'O') ";
 	
-	// caso nc
-	if ($nc==0) {
-		$ss_sql .= "AND ".$col_status."<>'NC' ";
-	} else {
-		$ss_sql .= "AND ".$col_status."='NC' ";
-	}
-
-	$ss_sql .= "AND ".$col_status."<>'O' ";
-	if($int_id_cat) $ss_sql.="AND $col_categoria=$int_id_cat ";
-	if($int_id_mod) $ss_sql.="AND c10_codigo=$int_id_mod ";
-	if($mod=="C") $ss_sql.="AND (c10_codigo=1 OR c10_codigo=2) ";
-	if($mod=="M") $ss_sql.="AND (c10_codigo=3 OR c10_codigo=4) ";
-
-	if ($classi==1) {
-		$ss_sql .= 'AND castTempo(calcTempo(c03_codigo,'.$int_id_ss.',c10_codigo,6)) != "* * *" ';
-	}
-	else {
-		$ss_sql .= 'AND castTempo(calcTempo(c03_codigo,'.$int_id_ss.',c10_codigo,6)) = "* * *" ';
-	}
-
-	$ss_sql .= 'ORDER BY total_c,c03_ordem,c03_codigo,geral_c,geral,total,L';
-
+	if ($int_id_cat) $ss_sql.="AND ($col_categoria = $int_id_cat) ";
+	elseif ($int_id_mod) $ss_sql.="AND (c10_codigo = $int_id_mod) ";
+	elseif ($mod == "M") $ss_sql.="AND (c10_codigo = 1 OR c10_codigo = 2 OR c10_codigo = 3) ";
+	elseif ($mod == "C") $ss_sql.="AND (c10_codigo = 4 OR c10_codigo = 5) ";
+	
+	$ss_sql.="ORDER BY _status, tempoTotal, tempo, C, I4, I3, I2, I1, L, numeral";
 	return $ss_sql;
 }
 
-
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///----------------------------------------------------------------------------------------------------------------------------------
 /**
 *
 *
 */
-function geraSqlPenal($int_id_ss, $int_id_cat, $int_id_mod) {
+function geraSqlPenal($int_id_ss, $int_id_cat, $int_id_mod, $mod) {
+	// define qual a coluna de categoria deve ser usada
+	$col_categoria = ($_REQUEST['subcategoria']) ? "c13_codigo2" : "c13_codigo";
+	$w_penal = "";
 	
 	if ($int_id_ss)  $w_penal.=" AND (t.c02_codigo=$int_id_ss)";
-	if ($int_id_cat) $w_penal.=" AND (v.c13_codigo=$int_id_cat)";
-	if ($int_id_mod) $w_penal.=" AND (v.c10_codigo=$int_id_mod)";
+	if ($int_id_cat) $w_penal.=" AND (v.$col_categoria=$int_id_cat)";
+	elseif ($int_id_mod) $w_penal.=" AND (v.c10_codigo=$int_id_mod)";
+	elseif ($mod == "M") $w_penal.=" AND (v.c10_codigo=1 OR v.c10_codigo=2 OR v.c10_codigo=3)";
+	elseif ($mod == "C") $w_penal.=" AND (v.c10_codigo=4 OR v.c10_codigo=5)";
 
 	$ss_penal = "SELECT
-	 DISTINCT v.c03_numero
+	 DISTINCT v.c03_numero AS numeral
 	 ,v.c03_codigo
-	 ,getTripulanteNome(v.c03_piloto) AS piloto
-	 ,getTripulanteNome(v.c03_navegador) AS navegador
-	 ,getTripulanteNome(v.c03_navegador2) AS navegador2
+	 ,getTripulanteNome(c03_piloto) AS tripulacao
+	 ,getEquipeNome(c03_piloto) AS equipe
 	 ,castTempo(t.c01_valor) AS P
 	 ,t.c02_codigo AS trecho
 	 ,t.c01_tipo AS tipo
@@ -253,12 +142,52 @@ function geraSqlPenal($int_id_ss, $int_id_cat, $int_id_mod) {
 	 FROM t03_veiculo as v, t01_tempos AS t 
 	 WHERE (t.c03_codigo=v.c03_codigo)
 	 $w_penal
-	 AND (t.c01_tipo='P' OR t.c01_tipo='PT')
+	 AND (t.c01_tipo='P' OR t.c01_tipo='PT' OR t.c01_tipo='A')
 	 AND v.c03_status <> 'O' 
 	 ORDER BY v.c03_codigo, t.c02_codigo";
+	 
 	return $ss_penal;
 }
 
+///----------------------------------------------------------------------------------------------------------------------------------
+/**
+*
+*
+*/
+function geraSqlAbandonos2($int_id_ss, $int_id_cat, $int_id_mod, $mod) {
+// define qual a coluna de categoria deve ser usada
+	$col_categoria = ($_REQUEST['subcategoria']) ? "c13_codigo2" : "c13_codigo";	
+	$w_penal = "";
+	
+	if ($int_id_ss)  $w_penal.=" AND (o.c33_ss=$int_id_ss)";
+	if ($int_id_cat) $w_penal.=" AND (v.$col_categoria=$int_id_cat)";
+	elseif ($int_id_mod) $w_penal.=" AND (v.c10_codigo=$int_id_mod)";
+	elseif ($mod == "M") $w_penal.=" AND (v.c10_codigo=1 OR v.c10_codigo=2 OR v.c10_codigo=3)";
+	elseif ($mod == "C") $w_penal.=" AND (v.c10_codigo=4 OR v.c10_codigo=5)";
+	
+	$query = "SELECT 
+				o.c33_motivo AS motivo
+				,o.c03_codigo AS numeral
+				,o.c33_ss AS trecho
+				,getTripulanteNome(v.c03_piloto) AS tripulacao
+				,getModeloNome(v.c03_piloto) AS modelo
+				,getEquipeNome(c03_piloto) AS equipe
+			FROM 
+				t33_ocorrencias AS o
+				,t03_veiculo AS v
+			WHERE 
+				v.c03_codigo = o.c03_codigo
+				$w_penal
+			ORDER BY 
+				trecho, numeral";
+
+	return $query;
+}
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////
 /*
 *
 *
