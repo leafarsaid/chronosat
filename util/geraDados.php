@@ -152,7 +152,7 @@ function geraDadosPenal($arr_comp) {
 		array_push($arr_retorno[$i], $arr_comp[$i]['numeral']);
 
 		//TRIPULACAO
-		$tripulacao = '<div class="trip" id="div"><b>'.htmlspecialchars(nomeComp($arr_comp[$i]['tripulacao'])).'</b><br>';
+		$tripulacao = '<div class="trip" id="div"><b>'.nomeComp($arr_comp[$i]['tripulacao']).'</b><br>';
 		if (strlen($arr_comp[$i]['modelo']) > 0) $tripulacao .= $arr_comp[$i]['modelo'];
 		$tripulacao .= '</div>';
 		array_push($arr_retorno[$i],$tripulacao);
@@ -170,7 +170,7 @@ function geraDadosPenal($arr_comp) {
 		array_push($arr_retorno[$i],substr($arr_comp[$i]['P'],0,8));
 
 		//motivo
-		array_push($arr_retorno[$i],'<div class="trip" id="div">'.$arr_comp[$i]['motivo'].'</div>');
+		array_push($arr_retorno[$i],'<div class="trip" id="div">'.htmlspecialchars($arr_comp[$i]['motivo']).'</div>');
 	}
 	return $arr_retorno;
 }
@@ -192,7 +192,7 @@ function geraDadosAbandonos($arr_comp) {
 		array_push($arr_retorno[$i], $arr_comp[$i]['numeral']);
 
 		//TRIPULACAO
-		$tripulacao = '<div class="trip" id="div"><b>'.htmlspecialchars(nomeComp($arr_comp[$i]['tripulacao'])).'</b><br>';
+		$tripulacao = '<div class="trip" id="div"><b>'.nomeComp($arr_comp[$i]['tripulacao']).'</b><br>';
 		if (strlen($arr_comp[$i]['modelo']) > 0) $tripulacao .= $arr_comp[$i]['modelo'];
 		$tripulacao .= '</div>';
 		array_push($arr_retorno[$i],$tripulacao);

@@ -8,9 +8,9 @@
 *
 */
 ///----------------------------------------------------------------------------------------------------------------------------------
-function geraSqlGeral2($arr_ss, $int_id_cat, $int_id_mod, $mod) {
+function geraSqlGeral2($arr_ss, $int_id_cat, $int_id_mod, $mod, $campeonato) {
 	// define qual a coluna de categoria deve ser usada
-	$col_categoria = ($_REQUEST['subcategoria']) ? "c13_codigo2" : "c13_codigo";
+	$col_categoria = ($_REQUEST['subcategoria'] || ($campeonato == "B")) ? "c13_codigo2" : "c13_codigo";
 	
 	$str_sql = 'SELECT DISTINCT ';
 	$str_sql .= 'c03_numero AS numeral, ';
@@ -59,9 +59,12 @@ function geraSqlGeral2($arr_ss, $int_id_cat, $int_id_mod, $mod) {
 	
 	$str_sql .= "FROM t03_veiculo WHERE (c03_status <> 'O') ";
 	
+	if ($campeonato == "F") $str_sql.="AND (c13_codigo = 11 OR c13_codigo = 21) ";
+	elseif ($campeonato == "B") $str_sql.="AND (c13_codigo2 > 0) ";
+	
 	if($int_id_cat) $str_sql.="AND ($col_categoria = $int_id_cat) ";
 	elseif ($int_id_mod) $str_sql.="AND (c10_codigo = $int_id_mod) ";
-	elseif ($mod == "M") $str_sql.="AND (c10_codigo = 1 OR c10_codigo = 2 OR c10_codigo = 3) ";
+	elseif ($mod == "M") $str_sql.="AND (c10_codigo = 1 OR c10_codigo = 2) ";
 	elseif ($mod == "C") $str_sql.="AND (c10_codigo = 4 OR c10_codigo = 5) ";
 	
 	$str_sql.="ORDER BY _status, tempoTotal, L, numeral";
@@ -74,10 +77,10 @@ function geraSqlGeral2($arr_ss, $int_id_cat, $int_id_mod, $mod) {
 *
 */
 ///----------------------------------------------------------------------------------------------------------------------------------
-function geraSqlSS2($int_id_ss, $int_id_cat, $int_id_mod, $mod) {
+function geraSqlSS2($int_id_ss, $int_id_cat, $int_id_mod, $mod, $campeonato) {
 
 	// define qual a coluna de categoria deve ser usada
-	$col_categoria = ($_REQUEST['subcategoria']) ? "c13_codigo2" : "c13_codigo";
+	$col_categoria = ($_REQUEST['subcategoria'] || ($campeonato == "B")) ? "c13_codigo2" : "c13_codigo";
 	
 	$ss_sql  = 'SELECT ';
 	$ss_sql .= "DISTINCT c03_numero AS numeral, ";
@@ -104,9 +107,12 @@ function geraSqlSS2($int_id_ss, $int_id_cat, $int_id_mod, $mod) {
 	
 	$ss_sql .= "FROM t03_veiculo WHERE (c03_status <> 'O') ";
 	
+	if ($campeonato == "F") $ss_sql.="AND (c13_codigo = 11 OR c13_codigo = 21) ";
+	elseif ($campeonato == "B") $ss_sql.="AND (c13_codigo2 > 0) ";
+	
 	if ($int_id_cat) $ss_sql.="AND ($col_categoria = $int_id_cat) ";
 	elseif ($int_id_mod) $ss_sql.="AND (c10_codigo = $int_id_mod) ";
-	elseif ($mod == "M") $ss_sql.="AND (c10_codigo = 1 OR c10_codigo = 2 OR c10_codigo = 3) ";
+	elseif ($mod == "M") $ss_sql.="AND (c10_codigo = 1 OR c10_codigo = 2) ";
 	elseif ($mod == "C") $ss_sql.="AND (c10_codigo = 4 OR c10_codigo = 5) ";
 	
 	$ss_sql.="ORDER BY _status, tempoTotal, tempo, C, I4, I3, I2, I1, L, numeral";
@@ -126,7 +132,7 @@ function geraSqlPenal($int_id_ss, $int_id_cat, $int_id_mod, $mod) {
 	if ($int_id_ss)  $w_penal.=" AND (t.c02_codigo=$int_id_ss)";
 	if ($int_id_cat) $w_penal.=" AND (v.$col_categoria=$int_id_cat)";
 	elseif ($int_id_mod) $w_penal.=" AND (v.c10_codigo=$int_id_mod)";
-	elseif ($mod == "M") $w_penal.=" AND (v.c10_codigo=1 OR v.c10_codigo=2 OR v.c10_codigo=3)";
+	elseif ($mod == "M") $w_penal.=" AND (v.c10_codigo=1 OR v.c10_codigo=2)";
 	elseif ($mod == "C") $w_penal.=" AND (v.c10_codigo=4 OR v.c10_codigo=5)";
 
 	$ss_penal = "SELECT
@@ -162,7 +168,7 @@ function geraSqlAbandonos2($int_id_ss, $int_id_cat, $int_id_mod, $mod) {
 	if ($int_id_ss)  $w_penal.=" AND (o.c33_ss=$int_id_ss)";
 	if ($int_id_cat) $w_penal.=" AND (v.$col_categoria=$int_id_cat)";
 	elseif ($int_id_mod) $w_penal.=" AND (v.c10_codigo=$int_id_mod)";
-	elseif ($mod == "M") $w_penal.=" AND (v.c10_codigo=1 OR v.c10_codigo=2 OR v.c10_codigo=3)";
+	elseif ($mod == "M") $w_penal.=" AND (v.c10_codigo=1 OR v.c10_codigo=2)";
 	elseif ($mod == "C") $w_penal.=" AND (v.c10_codigo=4 OR v.c10_codigo=5)";
 	
 	$query = "SELECT 

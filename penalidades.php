@@ -36,7 +36,7 @@ array_push($campos_header_ss,"NO");
 array_push($campos_header_ss,'<div class="trip" id="div">PILOTO/NAVEGADOR</div>');
 array_push($campos_header_ss,"ETAPA");
 array_push($campos_header_ss,"TIPO");
-array_push($campos_header_ss,"PENAL");
+array_push($campos_header_ss,"TEMPO");
 array_push($campos_header_ss,'<div class="trip" id="div">MOTIVO</div>');
 ?>
 

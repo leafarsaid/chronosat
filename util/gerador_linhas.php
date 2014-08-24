@@ -8,7 +8,7 @@ require_once "util/database/class/ControleBDFactory.class.php";
     funcoes para gerar linhas de relatorios
 	----------------------------------------------------------------------------- 
 */
-function printHeader($txt_pag, $txt_timestamp,$iFIM) {
+function printHeader($txt_pag, $txt_timestamp, $iFIM) {
 	global $prova;
 
 	$parametros = criaArray ("SELECT * FROM t11_prova"); 
@@ -271,13 +271,13 @@ function geraLinhaHtml2 ($arr_comp) {
 		for ($j = 0; $j < count($arr_comp[$i]); $j++) {
 			if ($arr_comp[$i][$j] == $arr_comp[$i-1][$j]) {
 				$linha .= '<td class="cells">';
-				if ($j>1) $linha .= $arr_comp[$i][$j];
+				if ($j>1) $linha .= ltrim(rtrim($arr_comp[$i][$j]));
 				$linha .= '</td>';
 				$span[$i][$j]++;
 			}
 			else {
 				$linha .= '<td class="cells">';
-				$linha .= $arr_comp[$i][$j];
+				$linha .= ltrim(rtrim($arr_comp[$i][$j]));
 				$linha .= '</td>';
 				$span[$i][$j]=0;
 			}
@@ -348,7 +348,7 @@ function geraTxtTimestamp($iCat, $iMod, $strMod, $iOficial) {
 		$txt_especifico .= "<br><font size='4'><b>Categoria: ".$temp[0]["descricao"]."</b></font>";
 	}
 	elseif ($strMod) {
-		if ($strMod == "M") $txt_especifico .= "<br><font size='4'><b>MOTOS/QUADS/UTVs</b></font>";
+		if ($strMod == "M") $txt_especifico .= "<br><font size='4'><b>MOTOS/QUADS</b></font>";
 		elseif ($strMod == "C") $txt_especifico .= "<br><font size='4'><b>CARROS/CAMINHOES</b></font>";
 	}
 	
