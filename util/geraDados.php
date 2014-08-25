@@ -54,18 +54,24 @@ function geraDadosGeral($arr_comp, $iFIM) {
 			
 			$dia = 86400;			
 			if ($arr_comp[$i]["tempoTotal"] < $dia){
-				$dias = "";
+				$dias = 0;
 			}
 			for($y=1;$y<15;$y++) {
 				if ($arr_comp[$i]["tempoTotal"] >= ($y * $dia) && $arr_comp[$i]["tempoTotal"] < (($y+1) * $dia)){
-					$dias = ($y+1)." ";
+					$dias = ($y+1);
 				}
-			}	
+			}
+			$dias_em_horas = $dias * 24;
+			$total = secToTime($arr_comp[$i]["tempoTotal"]);
+			
+			$total_txt = substr($total,0,2) + $dias_em_horas;
+			$total_txt .= ":";
+			$total_txt .= substr($total,3,$length_str-3);
 					
 			array_push($arr_retorno[$i],$arr_comp[$i]["tempo"]); 		//tempo sem penalidades
 			array_push($arr_retorno[$i],($stat == "N") ? $arr_comp[$i]["penais"] : "* * *");	//total de penalidades
 			array_push($arr_retorno[$i],$arr_comp[$i]["bonus"]);	//total de bonus
-			array_push($arr_retorno[$i],$dias.substr(secToTime($arr_comp[$i]["tempoTotal"]),0,$length_str));	//tempo total
+			array_push($arr_retorno[$i],$total_txt);	//tempo total
 			array_push($arr_retorno[$i],($i != 0) ? substr(secToTime($arr_comp[$i]["tempoTotal"]-$arr_comp[0]["tempoTotal"]),0,$length_str) : "*"); //dif. lider
 		}
 		else
