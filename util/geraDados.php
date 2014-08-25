@@ -52,13 +52,10 @@ function geraDadosGeral($arr_comp, $iFIM) {
 		//TEMPOS
 		if (($arr_comp[$i]["tempo"] != "* * *") && ($stat <> "D")) {
 			
-			$dia = 86400;			
-			if ($arr_comp[$i]["tempoTotal"] < $dia){
-				$dias = 0;
-			}
+			$dia = 86400;
 			for($y=1;$y<15;$y++) {
 				if ($arr_comp[$i]["tempoTotal"] >= ($y * $dia) && $arr_comp[$i]["tempoTotal"] < (($y+1) * $dia)){
-					$dias = ($y+1);
+					$dias = $y;
 				}
 			}
 			$dias_em_horas = $dias * 24;
