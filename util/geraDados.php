@@ -51,10 +51,21 @@ function geraDadosGeral($arr_comp, $iFIM) {
 
 		//TEMPOS
 		if (($arr_comp[$i]["tempo"] != "* * *") && ($stat <> "D")) {
+			
+			$dia = 86400;			
+			if ($arr_comp[$i]["tempoTotal"] < $dia){
+				$dias = "";
+			}
+			for($y=1;$y<15;$y++) {
+				if ($arr_comp[$i]["tempoTotal"] >= ($y * $dia) && $arr_comp[$i]["tempoTotal"] < (($y+1) * $dia)){
+					$dias = ($y+1)." ";
+				}
+			}	
+					
 			array_push($arr_retorno[$i],$arr_comp[$i]["tempo"]); 		//tempo sem penalidades
 			array_push($arr_retorno[$i],($stat == "N") ? $arr_comp[$i]["penais"] : "* * *");	//total de penalidades
 			array_push($arr_retorno[$i],$arr_comp[$i]["bonus"]);	//total de bonus
-			array_push($arr_retorno[$i],substr(secToTime($arr_comp[$i]["tempoTotal"]),0,$length_str));	//tempo total
+			array_push($arr_retorno[$i],$dias.substr(secToTime($arr_comp[$i]["tempoTotal"]),0,$length_str));	//tempo total
 			array_push($arr_retorno[$i],($i != 0) ? substr(secToTime($arr_comp[$i]["tempoTotal"]-$arr_comp[0]["tempoTotal"]),0,$length_str) : "*"); //dif. lider
 		}
 		else
