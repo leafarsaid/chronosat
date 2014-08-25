@@ -64,7 +64,7 @@ function geraDadosGeral($arr_comp, $iFIM) {
 			$dias_em_horas = $dias * 24;
 			$total = secToTime($arr_comp[$i]["tempoTotal"]);
 			
-			$total_txt = substr($total,0,2) + $dias_em_horas;
+			$total_txt = intval(substr($total,0,2)) + $dias_em_horas;
 			$total_txt .= ":";
 			$total_txt .= substr($total,3,$length_str-3);
 					
