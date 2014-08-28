@@ -24,7 +24,7 @@
 				color: #FFFFFF;
 				text-decoration: underline;
 			}
-			
+
 			.style0 {
 				color: #000000;
 				font-family: Arial, Helvetica, sans-serif;
@@ -45,10 +45,20 @@
 			}
 
 			.style6 {color: #CC9900; font-family: Arial, Helvetica, sans-serif; font-weight: bold; font-size: 14px; }
-			
+
 			.style8 {color: #CC9900; font-family: Arial, Helvetica, sans-serif; font-weight: bold; font-size: 12px; }
 		-->
 </style>
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-51125607-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
 	</head>
 	<body marginheight="0" marginwidth="0" leftmargin="0" rightmargin="0" topmargin="0" bgcolor="#000000">
 		<br/><p align="center"><img src="imagens/sertoes2014.jpg" /><br></p>
@@ -61,7 +71,7 @@
 			<tr bgcolor="#CC9900">
 				<td height="1" colspan="2"></td>
 			</tr>
-			
+
 			<tr valign="top">
 				<td valign="top">
 					<table border="1" align="left" cellpadding="5" cellspacing="0">
@@ -146,7 +156,7 @@
 						</tr>
 					</table>
 				</td>
-	
+
 				<td valign="top">
 					<table border="1" align="left" cellpadding="5" cellspacing="0">
 						<tr bgcolor="#CC9900">
@@ -165,7 +175,7 @@
 								<span class="style6">
 									<a href="./resultados/sertoes2014_resultado_carros_prologo_oficial.pdf">CARROS<br></a>
 									<a href="./resultados/sertoes2014_resultado_caminhoes_prologo_oficial.pdf">CAMINHÕES</a>
-									
+
 								</span>
 							</td>
 						</tr>
@@ -283,9 +293,20 @@
 						</tr>
 					</table>
 				</td>
+				<td>
+				<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+				<!-- Chronosat2 -->
+				<ins class="adsbygoogle"
+				     style="display:inline-block;width:300px;height:600px"
+				     data-ad-client="ca-pub-7475902832015013"
+				     data-ad-slot="7505063240"></ins>
+				<script>
+				(adsbygoogle = window.adsbygoogle || []).push({});
+				</script>
+				</td>
 			</tr>
 			<tr bgcolor="#CC9900">
-				<td height="1" colspan="2"></td>
+				<td height="1" colspan="3"></td>
 			</tr>
 		</table>
 	</body>
