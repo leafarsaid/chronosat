@@ -51,7 +51,7 @@ function geraDadosGeral($arr_comp, $iFIM) {
 
 		//TEMPOS
 		if (($arr_comp[$i]["tempo"] != "* * *") && ($stat <> "D")) {
-			
+
 			$dia = 86400;
 			for($y=1;$y<15;$y++) {
 				if ($arr_comp[$i]["tempoTotal"] >= ($y * $dia) && $arr_comp[$i]["tempoTotal"] < (($y+1) * $dia)){
@@ -60,11 +60,11 @@ function geraDadosGeral($arr_comp, $iFIM) {
 			}
 			$dias_em_horas = $dias * 24;
 			$total = secToTime($arr_comp[$i]["tempoTotal"]);
-			
+
 			$total_txt = intval(substr($total,0,2)) + $dias_em_horas;
 			$total_txt .= ":";
 			$total_txt .= substr($total,3,$length_str-3);
-					
+
 			array_push($arr_retorno[$i],$arr_comp[$i]["tempo"]); 		//tempo sem penalidades
 			array_push($arr_retorno[$i],($stat == "N") ? $arr_comp[$i]["penais"] : "* * *");	//total de penalidades
 			array_push($arr_retorno[$i],$arr_comp[$i]["bonus"]);	//total de bonus
@@ -129,13 +129,26 @@ function geraDadosSS($arr_comp, $iFIM) {
 		array_push($arr_retorno[$i],$arr_comp[$i]["chegada"]);		//chegada
 
 		//TEMPOS
+		$dia = 86400;
+		for($y=1;$y<15;$y++) {
+			if ($arr_comp[$i]["tempoTotal"] >= ($y * $dia) && $arr_comp[$i]["tempoTotal"] < (($y+1) * $dia)){
+				$dias = $y;
+			}
+		}
+		$dias_em_horas = $dias * 24;
+		$total = secToTime($arr_comp[$i]["tempoTotal"]);
+
+		$total_txt = intval(substr($total,0,2)) + $dias_em_horas;
+		$total_txt .= ":";
+		$total_txt .= substr($total,3,$length_str-3);
+
 		if (($arr_comp[$i]["tempo"] != 0) && ($stat <> "D")) {
 			if ($_REQUEST['trecho']==0) $length_str = 10;
 			else $length_str = 8;
 			array_push($arr_retorno[$i],substr(secToTime($arr_comp[$i]["tempo"]),0,$length_str));		//tempo sem penalidades
 			array_push($arr_retorno[$i],($stat == "N") ? $arr_comp[$i]["penais"] : "* * *");	//penalidades
 			array_push($arr_retorno[$i],$arr_comp[$i]["bonus"]);	//bonus
-			array_push($arr_retorno[$i],substr(secToTime($arr_comp[$i]["tempoTotal"]),0,$length_str));	//tempo total
+			array_push($arr_retorno[$i],$total_txt);	//tempo total
 			array_push($arr_retorno[$i],($i != 0) ? substr(secToTime($arr_comp[$i]["tempoTotal"]-$arr_comp[0]["tempoTotal"]),0,$length_str) : "*"); //dif. lider total
 			array_push($arr_retorno[$i],($i != 0) ? substr(secToTime($arr_comp[$i]["tempo"]-$arr_comp[0]["tempo"]),0,$length_str) : "*"); //dif. lider bruto
 		}
