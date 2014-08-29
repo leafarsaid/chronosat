@@ -10,6 +10,11 @@ require_once "util/database/class/ControleBDFactory.class.php";
 */
 function printHeader($txt_pag, $txt_timestamp, $iFIM) {
 	global $prova;
+	
+	$titulo = $_REQUEST['titulo'];
+	if (strlen($titulo)>0) {
+		$txt_pag = $titulo;
+	}
 
 	$parametros = criaArray ("SELECT * FROM t11_prova"); 
 	$nome_rally = "<b>".$parametros[0]["c11_titulo"]."</b>";	
